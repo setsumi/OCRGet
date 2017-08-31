@@ -38,7 +38,7 @@ namespace OCRGet
             InitializeComponent();
 
             lblStatus.Text = "";
-            linkLabel1.Links.Add(0, linkLabel1.Text.Length, "https://ocr.space/ocrapi");
+            linkLabel1.Links.Add(11, linkLabel1.Text.Length - 11, "https://ocr.space/ocrapi");
 
             LoadConfig();
         }
@@ -323,8 +323,24 @@ namespace OCRGet
 
         private void btnCopy_Click(object sender, EventArgs e)
         {
+            tmrCopy.Enabled = false;
             if (!string.IsNullOrWhiteSpace(txtResult.Text))
-                Clipboard.SetText(txtResult.Text);
+            {
+                try
+                {
+                    Clipboard.SetText(txtResult.Text);
+                }
+                catch
+                {
+                    tmrCopy.Enabled = true;
+                }
+            }
+        }
+
+        private void tmrCopy_Tick(object sender, EventArgs e)
+        {
+            tmrCopy.Enabled = false;
+            btnCopy_Click(this, null);
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -344,7 +360,7 @@ namespace OCRGet
                     OpenFile(file);
                     return;
                 }
-                lblStatus.Text = "Not JPEG file";
+                lblStatus.Text = "Not a JPEG file";
                 lblStatus.ForeColor = Color.Yellow;
                 lblStatus.BackColor = Color.Red;
             }

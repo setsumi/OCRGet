@@ -48,6 +48,7 @@
             this.chkAutocopy = new System.Windows.Forms.CheckBox();
             this.tmrRecognize = new System.Windows.Forms.Timer(this.components);
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.tmrCopy = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).BeginInit();
@@ -256,6 +257,7 @@
             // 
             // linkLabel1
             // 
+            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.Location = new System.Drawing.Point(572, 265);
             this.linkLabel1.Name = "linkLabel1";
@@ -264,6 +266,10 @@
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "powered by ocr.space";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
+            // tmrCopy
+            // 
+            this.tmrCopy.Tick += new System.EventHandler(this.tmrCopy_Tick);
             // 
             // Form1
             // 
@@ -316,6 +322,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox chkClearCache;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Timer tmrCopy;
     }
 }
 

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDraw));
             this.SuspendLayout();
             // 
             // FormDraw
@@ -36,8 +37,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 266);
             this.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormDraw";
-            this.Text = "FormDraw";
+            this.Text = "OCRGet Region Snap Form";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormDraw_FormClosing);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FormDraw_KeyPress);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FormDraw_MouseDown);
