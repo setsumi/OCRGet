@@ -46,7 +46,6 @@
             this.chkRestore = new System.Windows.Forms.CheckBox();
             this.chkAutorecognize = new System.Windows.Forms.CheckBox();
             this.chkAutocopy = new System.Windows.Forms.CheckBox();
-            this.tmrRecognize = new System.Windows.Forms.Timer(this.components);
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrCopy = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -251,10 +250,6 @@
             this.chkAutocopy.Text = "Auto copy results";
             this.chkAutocopy.UseVisualStyleBackColor = true;
             // 
-            // tmrRecognize
-            // 
-            this.tmrRecognize.Tick += new System.EventHandler(this.tmrRecognize_Tick);
-            // 
             // linkLabel1
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -314,7 +309,6 @@
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ComboBox cmbLanguage;
         private System.Windows.Forms.GroupBox grpbSettings;
-        private System.Windows.Forms.Timer tmrRecognize;
         private System.Windows.Forms.CheckBox chkRestore;
         private System.Windows.Forms.CheckBox chkAutorecognize;
         private System.Windows.Forms.CheckBox chkAutocopy;

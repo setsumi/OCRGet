@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Drawing.Imaging;
 using IniParser;
 using IniParser.Model;
+using System.Threading;
 
 namespace OCRGet
 {
@@ -85,7 +86,7 @@ namespace OCRGet
             FileInfo fileInfo = new FileInfo(imagepath);
             pictureBox1.Image = Image.FromFile(imagepath);
             this.Text = "OCRGet - " + fileInfo.Name;
-            imagesize = ((float)fileInfo.Length / 1024 / 1024).ToString("0.00") + " MB";
+            imagesize = ((float)fileInfo.Length / 1024f / 1024f).ToString("0.00") + " MB";
             lblStatus.Text = imagesize;
             lblStatus.ForeColor = SystemColors.ControlText;
             lblStatus.BackColor = Color.LightGreen;
@@ -106,35 +107,35 @@ namespace OCRGet
 
         private void Recognize()
         {
-            btnOpen.Enabled = false;
-            btnRegion.Enabled = false;
-            btnRecognize.Enabled = false;
-            txtResult.Text = "";
-            lblStatus.Text = "Contacting " + apiurl + " ...";
-            lblStatus.ForeColor = SystemColors.ControlText;
-            lblStatus.BackColor = Color.Yellow;
-
-            tmrRecognize.Enabled = true;
+            Thread t = new Thread(new ParameterizedThreadStart(RecognizeThread));
+            t.Start(this);
         }
 
-        private void tmrRecognize_Tick(object sender, EventArgs e)
+        private static void RecognizeThread(object o)
         {
-            tmrRecognize.Enabled = false;
+            Form1 form = (Form1)o;
+            form.btnOpen.Enabled = false;
+            form.btnRegion.Enabled = false;
+            form.btnRecognize.Enabled = false;
+            form.txtResult.Text = "";
+            form.lblStatus.Text = "Contacting " + form.apiurl + " ...";
+            form.lblStatus.ForeColor = SystemColors.ControlText;
+            form.lblStatus.BackColor = Color.Yellow;
 
             // Read file data
-            FileStream fs = new FileStream(imagepath, FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(form.imagepath, FileMode.Open, FileAccess.Read);
             byte[] data = new byte[fs.Length];
             fs.Read(data, 0, data.Length);
             fs.Close();
 
             // Generate post objects
             Dictionary<string, object> postParameters = new Dictionary<string, object>();
-            postParameters.Add("apikey", apikey);
-            postParameters.Add("language", getLanguage());
+            postParameters.Add("apikey", form.apikey);
+            postParameters.Add("language", form.getLanguage());
             postParameters.Add("file", new FormUpload.FileParameter(data, "image.jpg", "image"));
 
             // Create request and receive response
-            HttpWebResponse webResponse = FormUpload.MultipartFormDataPost(apiurl, useragent, postParameters);
+            HttpWebResponse webResponse = FormUpload.MultipartFormDataPost(form.apiurl, form.useragent, postParameters);
 
             // Process response
             StreamReader responseReader = new StreamReader(webResponse.GetResponseStream());
@@ -148,28 +149,28 @@ namespace OCRGet
                 {
                     for (int i = 0; i < ocrResult.ParsedResults.Count(); i++)
                     {
-                        txtResult.Text = txtResult.Text + ocrResult.ParsedResults[i].ParsedText;
+                        form.txtResult.Text = form.txtResult.Text + ocrResult.ParsedResults[i].ParsedText;
                     }
                 }
                 else
                 {
-                    txtResult.Text = "ERROR: " + fullResponse;
+                    form.txtResult.Text = "ERROR: " + fullResponse;
                 }
             }
             catch
             {
-                txtResult.Text = "ERROR: " + fullResponse;
+                form.txtResult.Text = "ERROR: " + fullResponse;
             }
 
-            if (chkAutocopy.Checked)
-                btnCopy_Click(this, null);
+            if (form.chkAutocopy.Checked)
+                form.btnCopy_Click(form, null);
 
-            btnOpen.Enabled = true;
-            btnRegion.Enabled = true;
-            btnRecognize.Enabled = true;
-            lblStatus.Text = imagesize + " Done";
-            lblStatus.ForeColor = SystemColors.ControlText;
-            lblStatus.BackColor = Color.LightGreen;
+            form.btnOpen.Enabled = true;
+            form.btnRegion.Enabled = true;
+            form.btnRecognize.Enabled = true;
+            form.lblStatus.Text = form.imagesize + " Done";
+            form.lblStatus.ForeColor = SystemColors.ControlText;
+            form.lblStatus.BackColor = Color.LightGreen;
         }
 
         private void btnRecognize_Click(object sender, EventArgs e)
