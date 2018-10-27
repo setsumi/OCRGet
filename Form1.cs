@@ -22,13 +22,17 @@ namespace OCRGet
     public partial class Form1 : Form
     {
 
-        private FormDraw formd1;
+        private FormDraw formd1 = null;
+        private FormDraw formn1 = null;
         private string imagepath { get; set; }
         private string imagesize { get; set; }
 
         private string apiurl { get; set; }
         private string apikey { get; set; }
         private string useragent { get; set; }
+
+        private string language { get; set; }
+        private string resulttext { get; set; }
 
         private FileIniDataParser config;
         private IniData inidata;
@@ -39,9 +43,18 @@ namespace OCRGet
             InitializeComponent();
 
             lblStatus.Text = "";
-            linkLabel1.Links.Add(11, linkLabel1.Text.Length - 11, "https://ocr.space/ocrapi");
+            linkLabel1.Links.Add(11, linkLabel1.Text.Length - 11, "https://status.ocr.space/");
 
             LoadConfig();
+
+            if (chkClearCache.Checked)
+            {
+                foreach (string f in Directory.EnumerateFiles(getCacheDir(), "*.jpg"))
+                {
+                    File.Delete(f);
+                }
+            }
+
         }
 
         private void LoadConfig()
@@ -59,11 +72,12 @@ namespace OCRGet
             chkRestore.Checked = bool.Parse(inidata["general"]["restoreapp"]);
             udQuality.Value = decimal.Parse(inidata["general"]["jpegquality"]);
             chkClearCache.Checked = bool.Parse(inidata["general"]["clearcache"]);
+            chkShowProgress.Checked = bool.Parse(inidata["general"]["showprogress"]);
 
             //inidata.Sections.AddSection("general");
             //inidata["general"].AddKey("apiurl", "http://api.ocr.space/Parse/Image");
             //inidata["general"].AddKey("apikey", "helloworld");
-            //inidata["general"].AddKey("useragent", "");
+            //inidata["general"].AddKey("useragent", "OCRGet");
             //inidata["general"].AddKey("language", "16");
             //inidata["general"].AddKey("autocopy", "true");
             //SaveConfig();
@@ -77,14 +91,15 @@ namespace OCRGet
             inidata["general"]["restoreapp"] = chkRestore.Checked.ToString();
             inidata["general"]["jpegquality"] = udQuality.Value.ToString();
             inidata["general"]["clearcache"] = chkClearCache.Checked.ToString();
+            inidata["general"]["showprogress"] = chkShowProgress.Checked.ToString();
             config.WriteFile(inifile, inidata);
         }
 
         private void OpenFile(string file)
         {
             imagepath = file;
-            FileInfo fileInfo = new FileInfo(imagepath);
             pictureBox1.Image = Image.FromFile(imagepath);
+            FileInfo fileInfo = new FileInfo(imagepath);
             this.Text = "OCRGet - " + fileInfo.Name;
             imagesize = ((float)fileInfo.Length / 1024f / 1024f).ToString("0.00") + " MB";
             lblStatus.Text = imagesize;
@@ -105,8 +120,37 @@ namespace OCRGet
             }
         }
 
+        void formn1_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawString("Requesting OCR responce...", new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold), Brushes.Lime, 0, 0);
+        }
+
         private void Recognize()
         {
+            if (chkShowProgress.Checked)
+            {
+                formn1 = new FormDraw();
+                formn1.Opacity = 1.0;
+                formn1.BackColor = Color.Black;
+                formn1.Width = 200;
+                formn1.Height = 20;
+                formn1.Left = 0;
+                formn1.Top = Screen.PrimaryScreen.Bounds.Height - formn1.Height;
+                formn1.Paint += new PaintEventHandler(formn1_Paint);
+                formn1.Show();
+            }
+
+            txtResult.Text = "";
+            resulttext = "";
+            language = getLanguage();
+
+            btnOpen.Enabled = false;
+            btnRegion.Enabled = false;
+            btnRecognize.Enabled = false;
+            lblStatus.Text = "Contacting " + apiurl + " ...";
+            lblStatus.ForeColor = SystemColors.ControlText;
+            lblStatus.BackColor = Color.Yellow;
+
             Thread t = new Thread(new ParameterizedThreadStart(RecognizeThread));
             t.Start(this);
         }
@@ -114,13 +158,6 @@ namespace OCRGet
         private static void RecognizeThread(object o)
         {
             Form1 form = (Form1)o;
-            form.btnOpen.Enabled = false;
-            form.btnRegion.Enabled = false;
-            form.btnRecognize.Enabled = false;
-            form.txtResult.Text = "";
-            form.lblStatus.Text = "Contacting " + form.apiurl + " ...";
-            form.lblStatus.ForeColor = SystemColors.ControlText;
-            form.lblStatus.BackColor = Color.Yellow;
 
             // Read file data
             FileStream fs = new FileStream(form.imagepath, FileMode.Open, FileAccess.Read);
@@ -131,11 +168,20 @@ namespace OCRGet
             // Generate post objects
             Dictionary<string, object> postParameters = new Dictionary<string, object>();
             postParameters.Add("apikey", form.apikey);
-            postParameters.Add("language", form.getLanguage());
+            postParameters.Add("language", form.language);
             postParameters.Add("file", new FormUpload.FileParameter(data, "image.jpg", "image"));
 
             // Create request and receive response
-            HttpWebResponse webResponse = FormUpload.MultipartFormDataPost(form.apiurl, form.useragent, postParameters);
+            HttpWebResponse webResponse;
+            try
+            {
+                webResponse = FormUpload.MultipartFormDataPost(form.apiurl, form.useragent, postParameters);
+            }
+            catch (Exception e)
+            {
+                form.resulttext = "ERROR: " + e.Message;
+                goto RecognizeEend;
+            }
 
             // Process response
             StreamReader responseReader = new StreamReader(webResponse.GetResponseStream());
@@ -149,28 +195,49 @@ namespace OCRGet
                 {
                     for (int i = 0; i < ocrResult.ParsedResults.Count(); i++)
                     {
-                        form.txtResult.Text = form.txtResult.Text + ocrResult.ParsedResults[i].ParsedText;
+                        form.resulttext = form.resulttext + ocrResult.ParsedResults[i].ParsedText;
                     }
                 }
                 else
                 {
-                    form.txtResult.Text = "ERROR: " + fullResponse;
+                    form.resulttext = "ERROR: " + fullResponse;
                 }
             }
             catch
             {
-                form.txtResult.Text = "ERROR: " + fullResponse;
+                form.resulttext = "ERROR: " + fullResponse;
             }
 
-            if (form.chkAutocopy.Checked)
-                form.btnCopy_Click(form, null);
+        RecognizeEend:
+            form.btnInvoke1_Click(form, null);
+        }
 
-            form.btnOpen.Enabled = true;
-            form.btnRegion.Enabled = true;
-            form.btnRecognize.Enabled = true;
-            form.lblStatus.Text = form.imagesize + " Done";
-            form.lblStatus.ForeColor = SystemColors.ControlText;
-            form.lblStatus.BackColor = Color.LightGreen;
+        private void btnInvoke1_Click(object sender, EventArgs e)
+        {
+            if (InvokeRequired)
+                BeginInvoke(new MethodInvoker(RecognizeFinish));
+        }
+        private void RecognizeFinish()
+        {
+            if (formn1 != null)
+            {
+                formn1.Hide();
+                formn1.Dispose();
+                formn1 = null;
+            }
+
+            txtResult.Text = resulttext;
+            btnOpen.Enabled = true;
+            btnRegion.Enabled = true;
+            btnRecognize.Enabled = true;
+            lblStatus.Text = imagesize + " Done";
+            lblStatus.ForeColor = SystemColors.ControlText;
+            lblStatus.BackColor = Color.LightGreen;
+
+            if (chkAutocopy.Checked)
+            {
+                btnCopy_Click(this, null);
+            }
         }
 
         private void btnRecognize_Click(object sender, EventArgs e)
@@ -221,16 +288,6 @@ namespace OCRGet
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveConfig();
-
-            if (pictureBox1.Image != null)
-                pictureBox1.Image.Dispose();
-            if (chkClearCache.Checked)
-            {
-                foreach (string f in Directory.EnumerateFiles(getCacheDir(), "*.jpg"))
-                {
-                    File.Delete(f);
-                }
-            }
         }
 
         private string getLanguage()
@@ -371,7 +428,24 @@ namespace OCRGet
         {
             System.Diagnostics.Process.Start(e.Link.LinkData.ToString());
         }
-    
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.R))
+            {
+                if (btnRegion.Enabled)
+                    btnRegion_Click(this, null);
+                return true;
+            } 
+            else if (keyData == (Keys.Control | Keys.O))
+            {
+                if (btnOpen.Enabled)
+                    btnOpen_Click(this, null);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
     }
 
 

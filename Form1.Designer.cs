@@ -40,6 +40,7 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.cmbLanguage = new System.Windows.Forms.ComboBox();
             this.grpbSettings = new System.Windows.Forms.GroupBox();
+            this.chkShowProgress = new System.Windows.Forms.CheckBox();
             this.chkClearCache = new System.Windows.Forms.CheckBox();
             this.udQuality = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
@@ -48,6 +49,8 @@
             this.chkAutocopy = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrCopy = new System.Windows.Forms.Timer(this.components);
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnInvoke1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).BeginInit();
@@ -60,26 +63,26 @@
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 0;
             this.btnOpen.Text = "Open...";
+            this.toolTip1.SetToolTip(this.btnOpen, "Ctrl+O");
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
             // txtResult
             // 
-            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtResult.BackColor = System.Drawing.SystemColors.Window;
-            this.txtResult.Location = new System.Drawing.Point(380, 41);
+            this.txtResult.Location = new System.Drawing.Point(323, 41);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
-            this.txtResult.ReadOnly = true;
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(305, 131);
+            this.txtResult.Size = new System.Drawing.Size(287, 109);
             this.txtResult.TabIndex = 3;
             // 
             // btnRecognize
             // 
-            this.btnRecognize.Location = new System.Drawing.Point(299, 85);
+            this.btnRecognize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRecognize.Location = new System.Drawing.Point(237, 85);
             this.btnRecognize.Name = "btnRecognize";
             this.btnRecognize.Size = new System.Drawing.Size(75, 30);
             this.btnRecognize.TabIndex = 2;
@@ -89,12 +92,13 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(12, 41);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(281, 234);
+            this.pictureBox1.Size = new System.Drawing.Size(216, 212);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -106,6 +110,7 @@
             this.btnRegion.Size = new System.Drawing.Size(75, 23);
             this.btnRegion.TabIndex = 1;
             this.btnRegion.Text = "Region";
+            this.toolTip1.SetToolTip(this.btnRegion, "Ctrl+R");
             this.btnRegion.UseVisualStyleBackColor = true;
             this.btnRegion.Click += new System.EventHandler(this.btnRegion_Click);
             // 
@@ -117,7 +122,7 @@
             // btnCopy
             // 
             this.btnCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCopy.Location = new System.Drawing.Point(610, 11);
+            this.btnCopy.Location = new System.Drawing.Point(535, 11);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new System.Drawing.Size(75, 23);
             this.btnCopy.TabIndex = 5;
@@ -166,36 +171,48 @@
             "Spanish",
             "Swedish",
             "Turkish"});
-            this.cmbLanguage.Location = new System.Drawing.Point(473, 11);
+            this.cmbLanguage.Location = new System.Drawing.Point(398, 11);
             this.cmbLanguage.Name = "cmbLanguage";
             this.cmbLanguage.Size = new System.Drawing.Size(121, 21);
             this.cmbLanguage.TabIndex = 4;
             // 
             // grpbSettings
             // 
-            this.grpbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbSettings.Controls.Add(this.chkShowProgress);
             this.grpbSettings.Controls.Add(this.chkClearCache);
             this.grpbSettings.Controls.Add(this.udQuality);
             this.grpbSettings.Controls.Add(this.label1);
             this.grpbSettings.Controls.Add(this.chkRestore);
             this.grpbSettings.Controls.Add(this.chkAutorecognize);
             this.grpbSettings.Controls.Add(this.chkAutocopy);
-            this.grpbSettings.Location = new System.Drawing.Point(299, 178);
+            this.grpbSettings.Location = new System.Drawing.Point(237, 156);
             this.grpbSettings.Name = "grpbSettings";
-            this.grpbSettings.Size = new System.Drawing.Size(386, 97);
+            this.grpbSettings.Size = new System.Drawing.Size(373, 97);
             this.grpbSettings.TabIndex = 6;
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Settings";
+            // 
+            // chkShowProgress
+            // 
+            this.chkShowProgress.AutoSize = true;
+            this.chkShowProgress.Location = new System.Drawing.Point(231, 65);
+            this.chkShowProgress.Name = "chkShowProgress";
+            this.chkShowProgress.Size = new System.Drawing.Size(96, 17);
+            this.chkShowProgress.TabIndex = 6;
+            this.chkShowProgress.Text = "Show progress";
+            this.toolTip1.SetToolTip(this.chkShowProgress, "Show pop-up indicator while web request is in progress ");
+            this.chkShowProgress.UseVisualStyleBackColor = true;
             // 
             // chkClearCache
             // 
             this.chkClearCache.AutoSize = true;
             this.chkClearCache.Location = new System.Drawing.Point(231, 42);
             this.chkClearCache.Name = "chkClearCache";
-            this.chkClearCache.Size = new System.Drawing.Size(117, 17);
+            this.chkClearCache.Size = new System.Drawing.Size(83, 17);
             this.chkClearCache.TabIndex = 5;
-            this.chkClearCache.Text = "Clear cache on exit";
+            this.chkClearCache.Text = "Clear cache";
+            this.toolTip1.SetToolTip(this.chkClearCache, "Delete region snap files when program starts");
             this.chkClearCache.UseVisualStyleBackColor = true;
             // 
             // udQuality
@@ -254,24 +271,38 @@
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(572, 265);
+            this.linkLabel1.Location = new System.Drawing.Point(497, 243);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(112, 13);
             this.linkLabel1.TabIndex = 8;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "powered by ocr.space";
+            this.toolTip1.SetToolTip(this.linkLabel1, "Show API status");
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // tmrCopy
             // 
             this.tmrCopy.Tick += new System.EventHandler(this.tmrCopy_Tick);
             // 
+            // btnInvoke1
+            // 
+            this.btnInvoke1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnInvoke1.Location = new System.Drawing.Point(21, 217);
+            this.btnInvoke1.Name = "btnInvoke1";
+            this.btnInvoke1.Size = new System.Drawing.Size(55, 23);
+            this.btnInvoke1.TabIndex = 9;
+            this.btnInvoke1.Text = "invoke1";
+            this.btnInvoke1.UseVisualStyleBackColor = true;
+            this.btnInvoke1.Visible = false;
+            this.btnInvoke1.Click += new System.EventHandler(this.btnInvoke1_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(697, 287);
+            this.ClientSize = new System.Drawing.Size(622, 265);
+            this.Controls.Add(this.btnInvoke1);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.grpbSettings);
             this.Controls.Add(this.cmbLanguage);
@@ -317,6 +348,9 @@
         private System.Windows.Forms.CheckBox chkClearCache;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Timer tmrCopy;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnInvoke1;
+        private System.Windows.Forms.CheckBox chkShowProgress;
     }
 }
 
