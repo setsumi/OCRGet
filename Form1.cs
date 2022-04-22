@@ -170,6 +170,9 @@ namespace OCRGet
             postParameters.Add("apikey", form.apikey);
             postParameters.Add("language", form.language);
             postParameters.Add("file", new FormUpload.FileParameter(data, "image.jpg", "image"));
+            postParameters.Add("detectOrientation", "true");
+            postParameters.Add("scale", "true");
+            postParameters.Add("OCREngine", "1");
 
             // Create request and receive response
             HttpWebResponse webResponse;
@@ -443,10 +446,13 @@ namespace OCRGet
                     btnOpen_Click(this, null);
                 return true;
             }
+            else if (keyData == (Keys.Escape))
+            {
+                this.WindowState = FormWindowState.Minimized;
+                return true;
+            }
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
     }
-
-
 }

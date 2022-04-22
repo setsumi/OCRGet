@@ -1,3 +1,5 @@
 # Intermediate Build files
 /bin
 /obj
+/.vs
+*.suo
