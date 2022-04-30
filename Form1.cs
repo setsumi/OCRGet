@@ -14,6 +14,8 @@ using System.Drawing.Imaging;
 using IniParser;
 using IniParser.Model;
 using System.Threading;
+using WindowsInput.Native;
+using WindowsInput;
 
 namespace OCRGet
 {
@@ -45,8 +47,15 @@ namespace OCRGet
             lblStatus.Text = "";
             linkLabel1.Links.Add(11, linkLabel1.Text.Length - 11, "https://status.ocr.space/");
 
+            // create cache folder
+            if (!Directory.Exists(getCacheDir()))
+            {
+                Directory.CreateDirectory(getCacheDir());
+            }
+
             LoadConfig();
 
+            // clear cache
             if (chkClearCache.Checked)
             {
                 foreach (string f in Directory.EnumerateFiles(getCacheDir(), "*.jpg"))
@@ -54,33 +63,71 @@ namespace OCRGet
                     File.Delete(f);
                 }
             }
-
         }
 
         private void LoadConfig()
         {
             config = new FileIniDataParser();
             inifile = Path.ChangeExtension(Application.ExecutablePath, ".ini");
+
+            if (!File.Exists(inifile))
+            {
+                inidata = new IniData();
+                inidata.Sections.AddSection("general");
+                inidata["general"].AddKey("apiurl", "http://api.ocr.space/Parse/Image");
+                inidata["general"].AddKey("apikey", "helloworld");
+                inidata["general"].AddKey("useragent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36");
+                inidata["general"].AddKey("language", "16");
+                inidata["general"].AddKey("autocopy", "True");
+                inidata["general"].AddKey("autorecognize", "True");
+                inidata["general"].AddKey("restoreapp", "True");
+                inidata["general"].AddKey("jpegquality", "90");
+                inidata["general"].AddKey("clearcache", "False");
+                inidata["general"].AddKey("showprogress", "False");
+
+                inidata["general"].AddKey("detectOrientation", "False");
+                inidata["general"].AddKey("scale", "True");
+                inidata["general"].AddKey("removeLinebreaks", "False");
+                inidata["general"].AddKey("isTable", "False");
+                inidata["general"].AddKey("engine", "1");
+
+                config.WriteFile(inifile, inidata);
+            }
+
             inidata = config.ReadFile(inifile);
 
-            apiurl = inidata["general"]["apiurl"];
-            apikey = inidata["general"]["apikey"];
-            useragent = inidata["general"]["useragent"];
-            cmbLanguage.SelectedIndex = int.Parse(inidata["general"]["language"]);
-            chkAutocopy.Checked = bool.Parse(inidata["general"]["autocopy"]);
-            chkAutorecognize.Checked = bool.Parse(inidata["general"]["autorecognize"]);
-            chkRestore.Checked = bool.Parse(inidata["general"]["restoreapp"]);
-            udQuality.Value = decimal.Parse(inidata["general"]["jpegquality"]);
-            chkClearCache.Checked = bool.Parse(inidata["general"]["clearcache"]);
-            chkShowProgress.Checked = bool.Parse(inidata["general"]["showprogress"]);
+            try
+            {
+                apiurl = inidata["general"]["apiurl"];
+                apikey = inidata["general"]["apikey"];
+                useragent = inidata["general"]["useragent"];
+                cmbLanguage.SelectedIndex = int.Parse(inidata["general"]["language"]);
+                chkAutocopy.Checked = bool.Parse(inidata["general"]["autocopy"]);
+                chkAutorecognize.Checked = bool.Parse(inidata["general"]["autorecognize"]);
+                chkRestore.Checked = bool.Parse(inidata["general"]["restoreapp"]);
+                udQuality.Value = decimal.Parse(inidata["general"]["jpegquality"]);
+                chkClearCache.Checked = bool.Parse(inidata["general"]["clearcache"]);
+                chkShowProgress.Checked = bool.Parse(inidata["general"]["showprogress"]);
 
-            //inidata.Sections.AddSection("general");
-            //inidata["general"].AddKey("apiurl", "http://api.ocr.space/Parse/Image");
-            //inidata["general"].AddKey("apikey", "helloworld");
-            //inidata["general"].AddKey("useragent", "OCRGet");
-            //inidata["general"].AddKey("language", "16");
-            //inidata["general"].AddKey("autocopy", "true");
-            //SaveConfig();
+                chkDetectOrientation.Checked = bool.Parse(inidata["general"]["detectOrientation"]);
+                chkScale.Checked = bool.Parse(inidata["general"]["scale"]);
+                chkRemoveLinebreaks.Checked = bool.Parse(inidata["general"]["removeLinebreaks"]);
+                chkIsTable.Checked = bool.Parse(inidata["general"]["isTable"]);
+                int engine = int.Parse(inidata["general"]["engine"]);
+                switch (engine)
+                {
+                    case 2:
+                        rdbEngine2.Checked = true;
+                        break;
+                    case 3:
+                        rdbEngine3.Checked = true;
+                        break;
+                    default:
+                        rdbEngine1.Checked = true;
+                        break;
+                }
+            }
+            catch { }
         }
 
         private void SaveConfig()
@@ -92,6 +139,16 @@ namespace OCRGet
             inidata["general"]["jpegquality"] = udQuality.Value.ToString();
             inidata["general"]["clearcache"] = chkClearCache.Checked.ToString();
             inidata["general"]["showprogress"] = chkShowProgress.Checked.ToString();
+
+            inidata["general"]["detectOrientation"] = chkDetectOrientation.Checked.ToString();
+            inidata["general"]["scale"] = chkScale.Checked.ToString();
+            inidata["general"]["removeLinebreaks"] = chkRemoveLinebreaks.Checked.ToString();
+            inidata["general"]["isTable"] = chkIsTable.Checked.ToString();
+            int engine = 1;
+            if (rdbEngine2.Checked) engine = 2;
+            else if (rdbEngine3.Checked) engine = 3;
+            inidata["general"]["engine"] = engine.ToString();
+
             config.WriteFile(inifile, inidata);
         }
 
@@ -168,11 +225,16 @@ namespace OCRGet
             // Generate post objects
             Dictionary<string, object> postParameters = new Dictionary<string, object>();
             postParameters.Add("apikey", form.apikey);
-            postParameters.Add("language", form.language);
+            if (!form.rdbEngine2.Checked) postParameters.Add("language", form.language);
             postParameters.Add("file", new FormUpload.FileParameter(data, "image.jpg", "image"));
-            postParameters.Add("detectOrientation", "true");
-            postParameters.Add("scale", "true");
-            postParameters.Add("OCREngine", "1");
+
+            postParameters.Add("detectOrientation", form.chkDetectOrientation.Checked.ToString().ToLower());
+            postParameters.Add("scale", form.chkScale.Checked.ToString().ToLower());
+            postParameters.Add("isTable", form.chkIsTable.Checked.ToString().ToLower());
+            int engine = 1;
+            if (form.rdbEngine2.Checked) engine = 2;
+            else if (form.rdbEngine3.Checked) engine = 3;
+            postParameters.Add("OCREngine", engine.ToString());
 
             // Create request and receive response
             HttpWebResponse webResponse;
@@ -199,6 +261,10 @@ namespace OCRGet
                     for (int i = 0; i < ocrResult.ParsedResults.Count(); i++)
                     {
                         form.resulttext = form.resulttext + ocrResult.ParsedResults[i].ParsedText;
+                    }
+                    if (form.chkRemoveLinebreaks.Checked)
+                    {
+                        form.resulttext = form.resulttext.Replace("\n", "").Replace("\r", "");
                     }
                 }
                 else
@@ -373,6 +439,27 @@ namespace OCRGet
                 case 24:
                     strLang = "tur";
                     break;
+                case 25: // Engine 3 from here on
+                    strLang = "hin";
+                    break;
+                case 26:
+                    strLang = "kan";
+                    break;
+                case 27:
+                    strLang = "per";
+                    break;
+                case 28:
+                    strLang = "tel";
+                    break;
+                case 29:
+                    strLang = "tam";
+                    break;
+                case 30:
+                    strLang = "tai";
+                    break;
+                case 31:
+                    strLang = "vie";
+                    break;
             }
             return strLang;
         }
@@ -434,19 +521,30 @@ namespace OCRGet
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (keyData == (Keys.Control | Keys.R))
+            if (keyData == (Keys.Control | Keys.S)) // region snap
             {
                 if (btnRegion.Enabled)
                     btnRegion_Click(this, null);
                 return true;
-            } 
-            else if (keyData == (Keys.Control | Keys.O))
+            }
+            else if (keyData == (Keys.Control | Keys.O)) // open image
             {
                 if (btnOpen.Enabled)
                     btnOpen_Click(this, null);
                 return true;
             }
-            else if (keyData == (Keys.Escape))
+            else if (keyData == (Keys.Control | Keys.R)) // recognize
+            {
+                if (btnRecognize.Enabled)
+                    btnRecognize_Click(this, null);
+                return true;
+            }
+            else if (keyData == (Keys.Control | Keys.C)) // copy text
+            {
+                btnCopy_Click(this, null);
+                return true;
+            }
+            else if (keyData == (Keys.Escape)) // minimize
             {
                 this.WindowState = FormWindowState.Minimized;
                 return true;
@@ -454,5 +552,14 @@ namespace OCRGet
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        private void tmrStartup_Tick(object sender, EventArgs e)
+        {
+            tmrStartup.Enabled = false;
+
+            // show form underlined Alt-keys
+            InputSimulator sim = new InputSimulator();
+            sim.Keyboard.KeyPress(VirtualKeyCode.MENU);
+            sim.Keyboard.KeyPress(VirtualKeyCode.MENU);
+        }
     }
 }
