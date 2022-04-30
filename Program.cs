@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace OCRGet
@@ -15,7 +16,25 @@ namespace OCRGet
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            if (!System.Diagnostics.Debugger.IsAttached)
+            {
+                Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+                Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            }
+
             Application.Run(new Form1());
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show((e.ExceptionObject as Exception).Message, "Unhandled UI Exception");
+        }
+
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.Message, "Unhandled Thread Exception");
         }
     }
 }
