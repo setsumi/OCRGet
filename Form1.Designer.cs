@@ -122,7 +122,7 @@
             this.btnRegion.Size = new System.Drawing.Size(75, 23);
             this.btnRegion.TabIndex = 1;
             this.btnRegion.Text = "Region...(&S)";
-            this.toolTip1.SetToolTip(this.btnRegion, "Region Snap (Ctrl+S)");
+            this.toolTip1.SetToolTip(this.btnRegion, "Region Snap (Ctrl+S), global (Ctrl+Alt+S)");
             this.btnRegion.UseVisualStyleBackColor = true;
             this.btnRegion.Click += new System.EventHandler(this.btnRegion_Click);
             // 

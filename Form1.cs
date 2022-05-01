@@ -16,6 +16,7 @@ using IniParser.Model;
 using System.Threading;
 using WindowsInput.Native;
 using WindowsInput;
+using ShareX.HelpersLib;
 
 namespace OCRGet
 {
@@ -24,8 +25,8 @@ namespace OCRGet
     public partial class Form1 : Form
     {
 
-        private FormDraw formd1 = null;
-        private FormDraw formn1 = null;
+        private FormDraw formd1 = null; // region draw form
+        private FormDraw formn1 = null; // OSD notify form
         private string imagepath { get; set; }
         private string imagesize { get; set; }
 
@@ -39,6 +40,7 @@ namespace OCRGet
         private FileIniDataParser config;
         private IniData inidata;
         private String inifile;
+        private int hotkeyID = 0;
 
         public Form1()
         {
@@ -63,6 +65,8 @@ namespace OCRGet
                     File.Delete(f);
                 }
             }
+
+            RegisterHotkey();
         }
 
         private void LoadConfig()
@@ -349,6 +353,7 @@ namespace OCRGet
                 OpenFile(imagepath);
             }
             formd1.Dispose();
+            formd1 = null;
 
             if (chkRestore.Checked)
                 this.WindowState = FormWindowState.Normal;
@@ -356,6 +361,7 @@ namespace OCRGet
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            UnregisterHotkey();
             SaveConfig();
         }
 
@@ -558,8 +564,57 @@ namespace OCRGet
 
             // show form underlined Alt-keys
             InputSimulator sim = new InputSimulator();
-            sim.Keyboard.KeyPress(VirtualKeyCode.MENU);
-            sim.Keyboard.KeyPress(VirtualKeyCode.MENU);
+            sim.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.MENU);
+            sim.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.MENU);
         }
+
+        private void RegisterHotkey()
+        {
+            string uniqueID = Guid.NewGuid().ToString("N");
+            hotkeyID = NativeMethods.GlobalAddAtom(uniqueID);
+            if (hotkeyID == 0)
+            {
+                throw new Exception("Unable to generate unique hotkey ID: " + hotkeyID);
+            }
+
+            // Ctrl-Alt-S
+            if (!NativeMethods.RegisterHotKey(this.Handle, hotkeyID, (uint)Modifiers.Control | (uint)Modifiers.Alt,
+                (uint)ShareX.HelpersLib.VirtualKeyCode.KEY_S))
+            {
+                NativeMethods.GlobalDeleteAtom((ushort)hotkeyID);
+                throw new Exception("Unable to register hotkey Ctrl-Alt-S with ID: " + hotkeyID);
+            }
+        }
+
+        private void UnregisterHotkey()
+        {
+            if (hotkeyID > 0)
+            {
+                bool result = NativeMethods.UnregisterHotKey(this.Handle, hotkeyID);
+                if (result)
+                {
+                    NativeMethods.GlobalDeleteAtom((ushort)hotkeyID);
+                    hotkeyID = 0;
+                }
+            }
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == (int)WindowsMessages.HOTKEY)
+            {
+                //ushort id = (ushort)m.WParam;
+                //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
+                //Modifiers modifier = (Modifiers)((int)m.LParam & 0xFFFF);
+                //OnKeyPressed(id, key, modifier);
+
+                // only one hotkey yet so no need to check for modifiers/keys
+                if (btnRegion.Enabled && formd1 == null)
+                    btnRegion_Click(this, null);
+                return;
+            }
+            base.WndProc(ref m);
+        }
+
     }
 }
