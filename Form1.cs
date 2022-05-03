@@ -76,11 +76,15 @@ namespace OCRGet
 
             if (!File.Exists(inifile))
             {
+                // config file only values
                 inidata = new IniData();
                 inidata.Sections.AddSection("general");
                 inidata["general"].AddKey("apiurl", "http://api.ocr.space/Parse/Image");
                 inidata["general"].AddKey("apikey", "helloworld");
                 inidata["general"].AddKey("useragent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36");
+                inidata["general"].AddKey("fontsize", "9");
+
+                // ui values
                 inidata["general"].AddKey("language", "16");
                 inidata["general"].AddKey("autocopy", "True");
                 inidata["general"].AddKey("autorecognize", "True");
@@ -105,6 +109,9 @@ namespace OCRGet
                 apiurl = inidata["general"]["apiurl"];
                 apikey = inidata["general"]["apikey"];
                 useragent = inidata["general"]["useragent"];
+                Font f = new Font(txtResult.Font.FontFamily, float.Parse(inidata["general"]["fontsize"]));
+                txtResult.Font = f;
+
                 cmbLanguage.SelectedIndex = int.Parse(inidata["general"]["language"]);
                 chkAutocopy.Checked = bool.Parse(inidata["general"]["autocopy"]);
                 chkAutorecognize.Checked = bool.Parse(inidata["general"]["autorecognize"]);
@@ -136,6 +143,8 @@ namespace OCRGet
 
         private void SaveConfig()
         {
+            inidata["general"]["fontsize"] = txtResult.Font.Size.ToString();
+
             inidata["general"]["language"] = cmbLanguage.SelectedIndex.ToString();
             inidata["general"]["autocopy"] = chkAutocopy.Checked.ToString();
             inidata["general"]["autorecognize"] = chkAutorecognize.Checked.ToString();
@@ -311,6 +320,9 @@ namespace OCRGet
             {
                 btnCopy_Click(this, null);
             }
+
+            if (chkRestore.Checked && chkShowProgress.Checked && this.WindowState == FormWindowState.Minimized)
+                this.WindowState = FormWindowState.Normal;
         }
 
         private void btnRecognize_Click(object sender, EventArgs e)
@@ -351,12 +363,17 @@ namespace OCRGet
                     g.Dispose();
                 }
                 OpenFile(imagepath);
+
+                if (chkRestore.Checked && !chkShowProgress.Checked)
+                    this.WindowState = FormWindowState.Normal;
+            }
+            else // snap cancelled
+            {
+                if (chkRestore.Checked)
+                    this.WindowState = FormWindowState.Normal;
             }
             formd1.Dispose();
             formd1 = null;
-
-            if (chkRestore.Checked)
-                this.WindowState = FormWindowState.Normal;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
