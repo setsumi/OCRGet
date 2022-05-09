@@ -80,7 +80,8 @@
             // 
             // txtResult
             // 
-            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtResult.BackColor = System.Drawing.SystemColors.Window;
             this.txtResult.Location = new System.Drawing.Point(331, 41);
@@ -92,7 +93,6 @@
             // 
             // btnRecognize
             // 
-            this.btnRecognize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRecognize.Location = new System.Drawing.Point(245, 73);
             this.btnRecognize.Name = "btnRecognize";
             this.btnRecognize.Size = new System.Drawing.Size(75, 30);
@@ -104,9 +104,8 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(12, 41);
             this.pictureBox1.Name = "pictureBox1";
@@ -433,19 +432,19 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(630, 340);
+            this.Controls.Add(this.btnCopy);
+            this.Controls.Add(this.cmbLanguage);
+            this.Controls.Add(this.btnRegion);
+            this.Controls.Add(this.btnOpen);
+            this.Controls.Add(this.btnRecognize);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.grpbOCR);
             this.Controls.Add(this.btnInvoke1);
             this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.cmbLanguage);
             this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.btnCopy);
-            this.Controls.Add(this.btnRegion);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.btnRecognize);
             this.Controls.Add(this.txtResult);
-            this.Controls.Add(this.btnOpen);
             this.Controls.Add(this.grpbSettings);
+            this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "OCRGet";

@@ -129,6 +129,9 @@
   <metadata name="tmrCopy.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>106, 16</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>199, 16</value>
+  </metadata>
   <data name="chkDetectOrientation.ToolTip" xml:space="preserve">
     <value>If set to true, the api autorotates the image correctly and
 sets the TextOrientation parameter in the JSON response.
