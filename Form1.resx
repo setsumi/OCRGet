@@ -120,17 +120,11 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>199, 16</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>199, 16</value>
-  </metadata>
   <metadata name="tmrSnap.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <metadata name="tmrCopy.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>106, 16</value>
-  </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>199, 16</value>
   </metadata>
   <data name="chkDetectOrientation.ToolTip" xml:space="preserve">
     <value>If set to true, the api autorotates the image correctly and
@@ -138,8 +132,13 @@ sets the TextOrientation parameter in the JSON response.
 If the image is not rotated, then TextOrientation=0,
 otherwise it is the degree of the rotation, e. g. "270".</value>
   </data>
+  <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>522, 16</value>
+  </metadata>
   <data name="rdbEngine3.ToolTip" xml:space="preserve">
-    <value>Features of OCR Engine 3:
+    <value>Right Click - select credential for this engine
+
+Features of OCR Engine 3:
     - Experimental new OCR Engine. The key advantage of using this OCR engine is the expanded language support. The drawback is that it is a bit slower, especially for larger images.
     - Additional, new languages (not available in Engine1 and 2) are: Hindi, Kannada, Persian (Fari), Telugu, Tamil, Thai and Vietnamese. (Contact us of you need any other OCR language/script)
     - The recognition logic works different than OCR Engine 1 and 2. So if you have a situation where E1 or E2 can not read the OCR input correctly, try it with Engine3 - it might work!
@@ -148,7 +147,9 @@ otherwise it is the degree of the rotation, e. g. "270".</value>
     - Image size limit FREE OCR Api 1000px width and 1000px height, PRO API: 5000px width and 5000px height</value>
   </data>
   <data name="rdbEngine2.ToolTip" xml:space="preserve">
-    <value>Features of OCR Engine 2:
+    <value>Right Click - select credential for this engine
+
+Features of OCR Engine 2:
     - Western Latin Character languages only (English, German, French,...)
     - Language auto-detect. It does not matter what OCR language you select, as long as it uses Latin characters
     - Usually better at single number OCR, single character OCR and alphanumeric OCR in general (e. g. SUDOKO,
@@ -158,7 +159,9 @@ otherwise it is the degree of the rotation, e. g. "270".</value>
     - Image size limit 5000px width and 5000px height</value>
   </data>
   <data name="rdbEngine1.ToolTip" xml:space="preserve">
-    <value>Features of OCR Engine 1:
+    <value>Right Click - select credential for this engine
+
+Features of OCR Engine 1:
     - Supports many languages (including Asian languages like Chinese, Japanese and Korean)
     - Fastest OCR
     - Supports larger images
@@ -172,6 +175,9 @@ input documents that have a table like structure.</value>
   </data>
   <metadata name="tmrStartup.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>296, 16</value>
+  </metadata>
+  <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>406, 16</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

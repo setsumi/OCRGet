@@ -37,9 +37,10 @@
             this.btnRegion = new System.Windows.Forms.Button();
             this.tmrSnap = new System.Windows.Forms.Timer(this.components);
             this.btnCopy = new System.Windows.Forms.Button();
-            this.lblStatus = new System.Windows.Forms.Label();
             this.cmbLanguage = new System.Windows.Forms.ComboBox();
             this.grpbSettings = new System.Windows.Forms.GroupBox();
+            this.chkRemoveSpaces = new System.Windows.Forms.CheckBox();
+            this.chkRemoveLinebreaks = new System.Windows.Forms.CheckBox();
             this.chkShowProgress = new System.Windows.Forms.CheckBox();
             this.chkClearCache = new System.Windows.Forms.CheckBox();
             this.udQuality = new System.Windows.Forms.NumericUpDown();
@@ -47,24 +48,37 @@
             this.chkRestore = new System.Windows.Forms.CheckBox();
             this.chkAutorecognize = new System.Windows.Forms.CheckBox();
             this.chkAutocopy = new System.Windows.Forms.CheckBox();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrCopy = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.chkScale = new System.Windows.Forms.CheckBox();
             this.chkDetectOrientation = new System.Windows.Forms.CheckBox();
             this.rdbEngine3 = new System.Windows.Forms.RadioButton();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.rdbEngine2 = new System.Windows.Forms.RadioButton();
             this.rdbEngine1 = new System.Windows.Forms.RadioButton();
             this.chkIsTable = new System.Windows.Forms.CheckBox();
+            this.rdbOCR1 = new System.Windows.Forms.RadioButton();
+            this.rdbOCR2 = new System.Windows.Forms.RadioButton();
             this.btnInvoke1 = new System.Windows.Forms.Button();
             this.grpbOCR = new System.Windows.Forms.GroupBox();
-            this.chkRemoveLinebreaks = new System.Windows.Forms.CheckBox();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrStartup = new System.Windows.Forms.Timer(this.components);
-            this.label2 = new System.Windows.Forms.Label();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.grpbOCR.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOpen
@@ -89,7 +103,7 @@
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtResult.Size = new System.Drawing.Size(287, 97);
-            this.txtResult.TabIndex = 3;
+            this.txtResult.TabIndex = 5;
             // 
             // btnRecognize
             // 
@@ -109,7 +123,7 @@
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(12, 41);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(224, 287);
+            this.pictureBox1.Size = new System.Drawing.Size(224, 307);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -136,21 +150,11 @@
             this.btnCopy.Location = new System.Drawing.Point(543, 11);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new System.Drawing.Size(75, 23);
-            this.btnCopy.TabIndex = 5;
+            this.btnCopy.TabIndex = 4;
             this.btnCopy.Text = "&Copy";
             this.toolTip1.SetToolTip(this.btnCopy, "Copy Recognized Text (Ctrl+C)");
             this.btnCopy.UseVisualStyleBackColor = true;
             this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblStatus.Location = new System.Drawing.Point(174, 18);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(56, 13);
-            this.lblStatus.TabIndex = 7;
-            this.lblStatus.Text = "lblStatus";
             // 
             // cmbLanguage
             // 
@@ -158,46 +162,19 @@
             this.cmbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLanguage.FormattingEnabled = true;
             this.cmbLanguage.Items.AddRange(new object[] {
-            "Arabic",
-            "Bulgarian",
-            "Chinese(Simplified)",
-            "Chinese(Traditional)",
-            "Croatian",
-            "Czech",
-            "Danish",
-            "Dutch",
-            "English",
-            "Finnish",
-            "French",
-            "German",
-            "Greek",
-            "Hungarian",
-            "Korean",
-            "Italian",
-            "Japanese",
-            "Norwegian",
-            "Polish",
-            "Portuguese",
-            "Russian",
-            "Slovenian",
-            "Spanish",
-            "Swedish",
-            "Turkish",
-            "Hindi --- Engine 3 ----",
-            "Kannada",
-            "Persian (Fari)",
-            "Telugu",
-            "Tamil",
-            "Thai",
-            "Vietnamese"});
+            "1",
+            "2",
+            "3"});
             this.cmbLanguage.Location = new System.Drawing.Point(406, 11);
             this.cmbLanguage.Name = "cmbLanguage";
             this.cmbLanguage.Size = new System.Drawing.Size(131, 21);
-            this.cmbLanguage.TabIndex = 4;
+            this.cmbLanguage.TabIndex = 3;
             // 
             // grpbSettings
             // 
             this.grpbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbSettings.Controls.Add(this.chkRemoveSpaces);
+            this.grpbSettings.Controls.Add(this.chkRemoveLinebreaks);
             this.grpbSettings.Controls.Add(this.chkShowProgress);
             this.grpbSettings.Controls.Add(this.chkClearCache);
             this.grpbSettings.Controls.Add(this.udQuality);
@@ -205,12 +182,34 @@
             this.grpbSettings.Controls.Add(this.chkRestore);
             this.grpbSettings.Controls.Add(this.chkAutorecognize);
             this.grpbSettings.Controls.Add(this.chkAutocopy);
-            this.grpbSettings.Location = new System.Drawing.Point(245, 231);
+            this.grpbSettings.Location = new System.Drawing.Point(245, 236);
             this.grpbSettings.Name = "grpbSettings";
-            this.grpbSettings.Size = new System.Drawing.Size(373, 97);
-            this.grpbSettings.TabIndex = 6;
+            this.grpbSettings.Size = new System.Drawing.Size(373, 112);
+            this.grpbSettings.TabIndex = 10;
             this.grpbSettings.TabStop = false;
-            this.grpbSettings.Text = "Program";
+            this.grpbSettings.Text = "Program settings";
+            // 
+            // chkRemoveSpaces
+            // 
+            this.chkRemoveSpaces.AutoSize = true;
+            this.chkRemoveSpaces.Location = new System.Drawing.Point(146, 88);
+            this.chkRemoveSpaces.Name = "chkRemoveSpaces";
+            this.chkRemoveSpaces.Size = new System.Drawing.Size(103, 17);
+            this.chkRemoveSpaces.TabIndex = 4;
+            this.chkRemoveSpaces.Text = "Remove spaces";
+            this.chkRemoveSpaces.UseVisualStyleBackColor = true;
+            this.chkRemoveSpaces.CheckedChanged += new System.EventHandler(this.chkRemoveLinebreaks_CheckedChanged);
+            // 
+            // chkRemoveLinebreaks
+            // 
+            this.chkRemoveLinebreaks.AutoSize = true;
+            this.chkRemoveLinebreaks.Location = new System.Drawing.Point(23, 88);
+            this.chkRemoveLinebreaks.Name = "chkRemoveLinebreaks";
+            this.chkRemoveLinebreaks.Size = new System.Drawing.Size(117, 17);
+            this.chkRemoveLinebreaks.TabIndex = 3;
+            this.chkRemoveLinebreaks.Text = "Remove linebreaks";
+            this.chkRemoveLinebreaks.UseVisualStyleBackColor = true;
+            this.chkRemoveLinebreaks.CheckedChanged += new System.EventHandler(this.chkRemoveLinebreaks_CheckedChanged);
             // 
             // chkShowProgress
             // 
@@ -218,7 +217,7 @@
             this.chkShowProgress.Location = new System.Drawing.Point(231, 65);
             this.chkShowProgress.Name = "chkShowProgress";
             this.chkShowProgress.Size = new System.Drawing.Size(96, 17);
-            this.chkShowProgress.TabIndex = 6;
+            this.chkShowProgress.TabIndex = 7;
             this.chkShowProgress.Text = "Show progress";
             this.toolTip1.SetToolTip(this.chkShowProgress, "Show pop-up indicator while web request is in progress ");
             this.chkShowProgress.UseVisualStyleBackColor = true;
@@ -229,7 +228,7 @@
             this.chkClearCache.Location = new System.Drawing.Point(231, 42);
             this.chkClearCache.Name = "chkClearCache";
             this.chkClearCache.Size = new System.Drawing.Size(83, 17);
-            this.chkClearCache.TabIndex = 5;
+            this.chkClearCache.TabIndex = 6;
             this.chkClearCache.Text = "Clear cache";
             this.toolTip1.SetToolTip(this.chkClearCache, "Delete region snap files when program starts");
             this.chkClearCache.UseVisualStyleBackColor = true;
@@ -240,7 +239,7 @@
             this.udQuality.Location = new System.Drawing.Point(311, 18);
             this.udQuality.Name = "udQuality";
             this.udQuality.Size = new System.Drawing.Size(56, 20);
-            this.udQuality.TabIndex = 4;
+            this.udQuality.TabIndex = 8;
             this.udQuality.Value = new decimal(new int[] {
             90,
             0,
@@ -253,7 +252,7 @@
             this.label1.Location = new System.Drawing.Point(228, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 3;
+            this.label1.TabIndex = 5;
             this.label1.Text = "JPEG quality";
             // 
             // chkRestore
@@ -286,19 +285,6 @@
             this.chkAutocopy.Text = "Auto copy results";
             this.chkAutocopy.UseVisualStyleBackColor = true;
             // 
-            // linkLabel1
-            // 
-            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(505, 318);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(112, 13);
-            this.linkLabel1.TabIndex = 8;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "powered by ocr.space";
-            this.toolTip1.SetToolTip(this.linkLabel1, "Show API status");
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            // 
             // tmrCopy
             // 
             this.tmrCopy.Tick += new System.EventHandler(this.tmrCopy_Tick);
@@ -306,10 +292,10 @@
             // chkScale
             // 
             this.chkScale.AutoSize = true;
-            this.chkScale.Location = new System.Drawing.Point(22, 42);
+            this.chkScale.Location = new System.Drawing.Point(10, 38);
             this.chkScale.Name = "chkScale";
             this.chkScale.Size = new System.Drawing.Size(53, 17);
-            this.chkScale.TabIndex = 4;
+            this.chkScale.TabIndex = 1;
             this.chkScale.Text = "Scale";
             this.toolTip1.SetToolTip(this.chkScale, "If set to true, the api does some internal upscaling.\r\nThis can improve the OCR r" +
         "esult significantly,\r\nespecially for low-resolution PDF scans.");
@@ -318,10 +304,10 @@
             // chkDetectOrientation
             // 
             this.chkDetectOrientation.AutoSize = true;
-            this.chkDetectOrientation.Location = new System.Drawing.Point(22, 19);
+            this.chkDetectOrientation.Location = new System.Drawing.Point(10, 15);
             this.chkDetectOrientation.Name = "chkDetectOrientation";
             this.chkDetectOrientation.Size = new System.Drawing.Size(110, 17);
-            this.chkDetectOrientation.TabIndex = 3;
+            this.chkDetectOrientation.TabIndex = 0;
             this.chkDetectOrientation.Text = "Detect orientation";
             this.toolTip1.SetToolTip(this.chkDetectOrientation, resources.GetString("chkDetectOrientation.ToolTip"));
             this.chkDetectOrientation.UseVisualStyleBackColor = true;
@@ -329,56 +315,117 @@
             // rdbEngine3
             // 
             this.rdbEngine3.AutoSize = true;
-            this.rdbEngine3.Location = new System.Drawing.Point(288, 56);
+            this.rdbEngine3.ContextMenuStrip = this.contextMenuStrip1;
+            this.rdbEngine3.Location = new System.Drawing.Point(132, 60);
             this.rdbEngine3.Name = "rdbEngine3";
             this.rdbEngine3.Size = new System.Drawing.Size(67, 17);
-            this.rdbEngine3.TabIndex = 2;
+            this.rdbEngine3.TabIndex = 5;
+            this.rdbEngine3.Tag = "2";
             this.rdbEngine3.Text = "Engine 3";
             this.toolTip1.SetToolTip(this.rdbEngine3, resources.GetString("rdbEngine3.ToolTip"));
             this.rdbEngine3.UseVisualStyleBackColor = true;
+            this.rdbEngine3.CheckedChanged += new System.EventHandler(this.rdbEngine1_CheckedChanged);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
+            this.toolStripMenuItem2});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Text = "toolStripMenuItem1";
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem2.Text = "toolStripMenuItem2";
             // 
             // rdbEngine2
             // 
             this.rdbEngine2.AutoSize = true;
-            this.rdbEngine2.Location = new System.Drawing.Point(288, 33);
+            this.rdbEngine2.ContextMenuStrip = this.contextMenuStrip1;
+            this.rdbEngine2.Location = new System.Drawing.Point(132, 37);
             this.rdbEngine2.Name = "rdbEngine2";
             this.rdbEngine2.Size = new System.Drawing.Size(67, 17);
-            this.rdbEngine2.TabIndex = 1;
+            this.rdbEngine2.TabIndex = 4;
+            this.rdbEngine2.Tag = "1";
             this.rdbEngine2.Text = "Engine 2";
             this.toolTip1.SetToolTip(this.rdbEngine2, resources.GetString("rdbEngine2.ToolTip"));
             this.rdbEngine2.UseVisualStyleBackColor = true;
+            this.rdbEngine2.CheckedChanged += new System.EventHandler(this.rdbEngine1_CheckedChanged);
             // 
             // rdbEngine1
             // 
             this.rdbEngine1.AutoSize = true;
-            this.rdbEngine1.Checked = true;
-            this.rdbEngine1.Location = new System.Drawing.Point(288, 10);
+            this.rdbEngine1.ContextMenuStrip = this.contextMenuStrip1;
+            this.rdbEngine1.Location = new System.Drawing.Point(132, 14);
             this.rdbEngine1.Name = "rdbEngine1";
             this.rdbEngine1.Size = new System.Drawing.Size(67, 17);
-            this.rdbEngine1.TabIndex = 0;
-            this.rdbEngine1.TabStop = true;
+            this.rdbEngine1.TabIndex = 3;
+            this.rdbEngine1.Tag = "0";
             this.rdbEngine1.Text = "Engine 1";
             this.toolTip1.SetToolTip(this.rdbEngine1, resources.GetString("rdbEngine1.ToolTip"));
             this.rdbEngine1.UseVisualStyleBackColor = true;
+            this.rdbEngine1.CheckedChanged += new System.EventHandler(this.rdbEngine1_CheckedChanged);
             // 
             // chkIsTable
             // 
             this.chkIsTable.AutoSize = true;
-            this.chkIsTable.Location = new System.Drawing.Point(138, 42);
+            this.chkIsTable.Location = new System.Drawing.Point(10, 61);
             this.chkIsTable.Name = "chkIsTable";
             this.chkIsTable.Size = new System.Drawing.Size(63, 17);
-            this.chkIsTable.TabIndex = 6;
+            this.chkIsTable.TabIndex = 2;
             this.chkIsTable.Text = "is Table";
             this.toolTip1.SetToolTip(this.chkIsTable, resources.GetString("chkIsTable.ToolTip"));
             this.chkIsTable.UseVisualStyleBackColor = true;
             // 
+            // rdbOCR1
+            // 
+            this.rdbOCR1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.rdbOCR1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rdbOCR1.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.rdbOCR1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.rdbOCR1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.rdbOCR1.Location = new System.Drawing.Point(473, 145);
+            this.rdbOCR1.Name = "rdbOCR1";
+            this.rdbOCR1.Size = new System.Drawing.Size(24, 18);
+            this.rdbOCR1.TabIndex = 9;
+            this.rdbOCR1.TabStop = true;
+            this.rdbOCR1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.rdbOCR1, "Activate");
+            this.rdbOCR1.UseVisualStyleBackColor = true;
+            // 
+            // rdbOCR2
+            // 
+            this.rdbOCR2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.rdbOCR2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rdbOCR2.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.rdbOCR2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.rdbOCR2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.rdbOCR2.Location = new System.Drawing.Point(337, 145);
+            this.rdbOCR2.Name = "rdbOCR2";
+            this.rdbOCR2.Size = new System.Drawing.Size(24, 18);
+            this.rdbOCR2.TabIndex = 8;
+            this.rdbOCR2.TabStop = true;
+            this.rdbOCR2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.rdbOCR2, "Activate");
+            this.rdbOCR2.UseVisualStyleBackColor = true;
+            // 
             // btnInvoke1
             // 
             this.btnInvoke1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnInvoke1.Location = new System.Drawing.Point(21, 292);
+            this.btnInvoke1.Location = new System.Drawing.Point(32, 93);
             this.btnInvoke1.Name = "btnInvoke1";
             this.btnInvoke1.Size = new System.Drawing.Size(55, 23);
-            this.btnInvoke1.TabIndex = 9;
+            this.btnInvoke1.TabIndex = 2;
             this.btnInvoke1.Text = "invoke1";
             this.btnInvoke1.UseVisualStyleBackColor = true;
             this.btnInvoke1.Visible = false;
@@ -387,64 +434,119 @@
             // grpbOCR
             // 
             this.grpbOCR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbOCR.Controls.Add(this.linkLabel1);
             this.grpbOCR.Controls.Add(this.chkIsTable);
-            this.grpbOCR.Controls.Add(this.chkRemoveLinebreaks);
             this.grpbOCR.Controls.Add(this.chkScale);
             this.grpbOCR.Controls.Add(this.chkDetectOrientation);
             this.grpbOCR.Controls.Add(this.rdbEngine3);
             this.grpbOCR.Controls.Add(this.rdbEngine2);
             this.grpbOCR.Controls.Add(this.rdbEngine1);
-            this.grpbOCR.Location = new System.Drawing.Point(245, 144);
+            this.grpbOCR.Location = new System.Drawing.Point(406, 148);
             this.grpbOCR.Name = "grpbOCR";
-            this.grpbOCR.Size = new System.Drawing.Size(373, 81);
-            this.grpbOCR.TabIndex = 10;
+            this.grpbOCR.Size = new System.Drawing.Size(212, 86);
+            this.grpbOCR.TabIndex = 7;
             this.grpbOCR.TabStop = false;
-            this.grpbOCR.Text = "OCR";
             // 
-            // chkRemoveLinebreaks
+            // linkLabel1
             // 
-            this.chkRemoveLinebreaks.AutoSize = true;
-            this.chkRemoveLinebreaks.Location = new System.Drawing.Point(138, 19);
-            this.chkRemoveLinebreaks.Name = "chkRemoveLinebreaks";
-            this.chkRemoveLinebreaks.Size = new System.Drawing.Size(117, 17);
-            this.chkRemoveLinebreaks.TabIndex = 5;
-            this.chkRemoveLinebreaks.Text = "Remove linebreaks";
-            this.chkRemoveLinebreaks.UseVisualStyleBackColor = true;
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(7, -1);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(54, 13);
+            this.linkLabel1.TabIndex = 7;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "ocr.space";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // tmrStartup
             // 
             this.tmrStartup.Enabled = true;
             this.tmrStartup.Tick += new System.EventHandler(this.tmrStartup_Tick);
             // 
-            // label2
+            // statusStrip1
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(251, 319);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(73, 13);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "Esc - minimize";
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel2,
+            this.toolStripStatusLabel4,
+            this.toolStripStatusLabel3});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 355);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.ShowItemToolTips = true;
+            this.statusStrip1.Size = new System.Drawing.Size(630, 22);
+            this.statusStrip1.TabIndex = 3;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(127, 17);
+            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(84, 17);
+            this.toolStripStatusLabel3.Text = "Esc - minimize";
+            this.toolStripStatusLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.button1);
+            this.groupBox1.Location = new System.Drawing.Point(245, 148);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(145, 86);
+            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "WIndows OCR";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(32, 34);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Information";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(394, 17);
+            this.toolStripStatusLabel2.Spring = true;
+            this.toolStripStatusLabel2.Text = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolStripStatusLabel2.ToolTipText = "1234";
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(10, 17);
+            this.toolStripStatusLabel4.Text = "|";
             // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(630, 340);
-            this.Controls.Add(this.btnCopy);
-            this.Controls.Add(this.cmbLanguage);
+            this.ClientSize = new System.Drawing.Size(630, 377);
             this.Controls.Add(this.btnRegion);
             this.Controls.Add(this.btnOpen);
+            this.Controls.Add(this.rdbOCR1);
+            this.Controls.Add(this.rdbOCR2);
             this.Controls.Add(this.btnRecognize);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.btnCopy);
+            this.Controls.Add(this.cmbLanguage);
             this.Controls.Add(this.grpbOCR);
             this.Controls.Add(this.btnInvoke1);
-            this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.txtResult);
             this.Controls.Add(this.grpbSettings);
             this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.txtResult);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "OCRGet";
@@ -455,8 +557,12 @@
             this.grpbSettings.ResumeLayout(false);
             this.grpbSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.grpbOCR.ResumeLayout(false);
             this.grpbOCR.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -471,7 +577,6 @@
         private System.Windows.Forms.Button btnRegion;
         private System.Windows.Forms.Timer tmrSnap;
         private System.Windows.Forms.Button btnCopy;
-        private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ComboBox cmbLanguage;
         private System.Windows.Forms.GroupBox grpbSettings;
         private System.Windows.Forms.CheckBox chkRestore;
@@ -480,7 +585,6 @@
         private System.Windows.Forms.NumericUpDown udQuality;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox chkClearCache;
-        private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Timer tmrCopy;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnInvoke1;
@@ -491,10 +595,23 @@
         private System.Windows.Forms.RadioButton rdbEngine3;
         private System.Windows.Forms.RadioButton rdbEngine2;
         private System.Windows.Forms.RadioButton rdbEngine1;
-        private System.Windows.Forms.CheckBox chkRemoveLinebreaks;
         private System.Windows.Forms.CheckBox chkIsTable;
         private System.Windows.Forms.Timer tmrStartup;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.CheckBox chkRemoveLinebreaks;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.RadioButton rdbOCR1;
+        private System.Windows.Forms.RadioButton rdbOCR2;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.CheckBox chkRemoveSpaces;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
     }
 }
 
