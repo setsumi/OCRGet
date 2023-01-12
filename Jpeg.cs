@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Drawing.Imaging;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace OCRGet
 {
 
-    class Jpeg
+    static class Jpeg
     {
 
         private static ImageCodecInfo GetEncoder(ImageFormat format)
@@ -45,6 +46,39 @@ namespace OCRGet
             myEncoderParameters.Param[0] = myEncoderParameter;
             bmp.Save(path, jpgEncoder, myEncoderParameters);
         }
-    }
+    } // Jpeg
 
+    static class ImageHelper
+    {
+        private const InterpolationMode DefaultInterpolationMode = InterpolationMode.HighQualityBicubic;
+
+        public static Bitmap ResizeImage(Bitmap bmp, int width, int height, InterpolationMode interpolationMode = DefaultInterpolationMode)
+        {
+            if (width < 1 || height < 1 || (bmp.Width == width && bmp.Height == height))
+            {
+                return bmp;
+            }
+
+            Bitmap bmpResult = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            bmpResult.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
+
+            using (bmp)
+            using (Graphics g = Graphics.FromImage(bmpResult))
+            {
+                g.InterpolationMode = interpolationMode;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.CompositingMode = CompositingMode.SourceOver;
+
+                using (ImageAttributes ia = new ImageAttributes())
+                {
+                    ia.SetWrapMode(WrapMode.TileFlipXY);
+                    g.DrawImage(bmp, new Rectangle(0, 0, width, height), 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel, ia);
+                }
+            }
+
+            return bmpResult;
+        }
+    } // ImageHelper
 }

@@ -197,6 +197,7 @@ namespace OCRGet
             _config = new FileIniDataParser();
             _inifile = Path.ChangeExtension(Application.ExecutablePath, ".ini");
 
+            // Create fresh INI file
             if (!File.Exists(_inifile))
             {
                 // config file only values
@@ -221,6 +222,8 @@ namespace OCRGet
                 _inidata["general"].AddKey("jpegquality", "95");
                 _inidata["general"].AddKey("clearcache", "False");
                 _inidata["general"].AddKey("showprogress", "False");
+                _inidata["general"].AddKey("scaleCaptured", "True");
+                _inidata["general"].AddKey("scaleFactor", "2");
 
                 _inidata["general"].AddKey("detectOrientation", "False");
                 _inidata["general"].AddKey("scale", "True");
@@ -254,6 +257,7 @@ namespace OCRGet
                 contextMenuStrip1.Items.Add(item);
             }
 
+            // Program options
             Font f = new Font(txtResult.Font.FontFamily, float.Parse(_inidata["general"]["fontsize"]));
             txtResult.Font = f;
             cmbLanguage.SelectedIndex = int.Parse(_inidata["general"]["language"]);
@@ -263,7 +267,13 @@ namespace OCRGet
             udQuality.Value = decimal.Parse(_inidata["general"]["jpegquality"]);
             chkClearCache.Checked = bool.Parse(_inidata["general"]["clearcache"]);
             chkShowProgress.Checked = bool.Parse(_inidata["general"]["showprogress"]);
+            string v;
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleCaptured", out v);
+            chkScaleFactor.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "True" : v);
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleFactor", out v);
+            nudScaleFactor.Value = decimal.Parse(string.IsNullOrEmpty(v) ? "2" : v);
 
+            // ocr.space options
             chkDetectOrientation.Checked = bool.Parse(_inidata["general"]["detectOrientation"]);
             chkScale.Checked = bool.Parse(_inidata["general"]["scale"]);
             chkRemoveLinebreaks.Checked = bool.Parse(_inidata["general"]["removeLinebreaks"]);
@@ -289,6 +299,8 @@ namespace OCRGet
             _inidata["general"]["jpegquality"] = udQuality.Value.ToString();
             _inidata["general"]["clearcache"] = chkClearCache.Checked.ToString();
             _inidata["general"]["showprogress"] = chkShowProgress.Checked.ToString();
+            _inidata["general"]["scaleCaptured"] = chkScaleFactor.Checked.ToString();
+            _inidata["general"]["scaleFactor"] = nudScaleFactor.Value.ToString();
 
             _inidata["general"]["detectOrientation"] = chkDetectOrientation.Checked.ToString();
             _inidata["general"]["scale"] = chkScale.Checked.ToString();
@@ -530,13 +542,25 @@ namespace OCRGet
             if (rect.Width > 10 && rect.Height > 10)
             {
                 using (Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb))
+                using (Graphics g = Graphics.FromImage(bmp))
                 {
-                    Graphics g = Graphics.FromImage(bmp);
+                    Bitmap bmpResult = bmp;
+                    // get image from screen
                     g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
+
+                    // scale image
+                    if (chkScaleFactor.Checked)
+                    {
+                        bmpResult = ImageHelper.ResizeImage(bmp,
+                            (int)(bmp.Width * (float)nudScaleFactor.Value),
+                            (int)(bmp.Height * (float)nudScaleFactor.Value));
+                    }
+
+                    // save image to file
                     p_imagepath = getCacheDir() + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff") + ".jpg";
-                    Jpeg.Save(bmp, p_imagepath, (long)udQuality.Value);
-                    g.Dispose();
+                    Jpeg.Save(bmpResult, p_imagepath, (long)udQuality.Value);
                 }
+
                 OpenFile(p_imagepath);
 
                 if (chkRestore.Checked && !chkShowProgress.Checked)

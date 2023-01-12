@@ -67,11 +67,13 @@
             this.tmrStartup = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.chkScaleFactor = new System.Windows.Forms.CheckBox();
+            this.nudScaleFactor = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).BeginInit();
@@ -79,6 +81,7 @@
             this.grpbOCR.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudScaleFactor)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOpen
@@ -173,6 +176,8 @@
             // grpbSettings
             // 
             this.grpbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbSettings.Controls.Add(this.nudScaleFactor);
+            this.grpbSettings.Controls.Add(this.chkScaleFactor);
             this.grpbSettings.Controls.Add(this.chkRemoveSpaces);
             this.grpbSettings.Controls.Add(this.chkRemoveLinebreaks);
             this.grpbSettings.Controls.Add(this.chkShowProgress);
@@ -185,7 +190,7 @@
             this.grpbSettings.Location = new System.Drawing.Point(245, 236);
             this.grpbSettings.Name = "grpbSettings";
             this.grpbSettings.Size = new System.Drawing.Size(373, 112);
-            this.grpbSettings.TabIndex = 10;
+            this.grpbSettings.TabIndex = 8;
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Program settings";
             // 
@@ -214,21 +219,22 @@
             // chkShowProgress
             // 
             this.chkShowProgress.AutoSize = true;
-            this.chkShowProgress.Location = new System.Drawing.Point(231, 65);
+            this.chkShowProgress.Location = new System.Drawing.Point(271, 88);
             this.chkShowProgress.Name = "chkShowProgress";
             this.chkShowProgress.Size = new System.Drawing.Size(96, 17);
-            this.chkShowProgress.TabIndex = 7;
+            this.chkShowProgress.TabIndex = 10;
             this.chkShowProgress.Text = "Show progress";
-            this.toolTip1.SetToolTip(this.chkShowProgress, "Show pop-up indicator while web request is in progress ");
+            this.toolTip1.SetToolTip(this.chkShowProgress, "Show pop-up indicator while web request is in progress.\r\nNote: Deactivates \"Resto" +
+        "re app after region snap\" option.");
             this.chkShowProgress.UseVisualStyleBackColor = true;
             // 
             // chkClearCache
             // 
             this.chkClearCache.AutoSize = true;
-            this.chkClearCache.Location = new System.Drawing.Point(231, 42);
+            this.chkClearCache.Location = new System.Drawing.Point(271, 65);
             this.chkClearCache.Name = "chkClearCache";
             this.chkClearCache.Size = new System.Drawing.Size(83, 17);
-            this.chkClearCache.TabIndex = 6;
+            this.chkClearCache.TabIndex = 9;
             this.chkClearCache.Text = "Clear cache";
             this.toolTip1.SetToolTip(this.chkClearCache, "Delete region snap files when program starts");
             this.chkClearCache.UseVisualStyleBackColor = true;
@@ -236,7 +242,7 @@
             // udQuality
             // 
             this.udQuality.BackColor = System.Drawing.SystemColors.Window;
-            this.udQuality.Location = new System.Drawing.Point(311, 18);
+            this.udQuality.Location = new System.Drawing.Point(308, 40);
             this.udQuality.Name = "udQuality";
             this.udQuality.Size = new System.Drawing.Size(56, 20);
             this.udQuality.TabIndex = 8;
@@ -249,11 +255,12 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(228, 20);
+            this.label1.Location = new System.Drawing.Point(225, 42);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 5;
+            this.label1.TabIndex = 7;
             this.label1.Text = "JPEG quality";
+            this.toolTip1.SetToolTip(this.label1, "Quality of snapped images saved to cache");
             // 
             // chkRestore
             // 
@@ -263,6 +270,7 @@
             this.chkRestore.Size = new System.Drawing.Size(166, 17);
             this.chkRestore.TabIndex = 2;
             this.chkRestore.Text = "Restore app after region snap";
+            this.toolTip1.SetToolTip(this.chkRestore, "Have no effect when \"Show progress\" is used");
             this.chkRestore.UseVisualStyleBackColor = true;
             // 
             // chkAutorecognize
@@ -280,9 +288,9 @@
             this.chkAutocopy.AutoSize = true;
             this.chkAutocopy.Location = new System.Drawing.Point(23, 42);
             this.chkAutocopy.Name = "chkAutocopy";
-            this.chkAutocopy.Size = new System.Drawing.Size(107, 17);
+            this.chkAutocopy.Size = new System.Drawing.Size(136, 17);
             this.chkAutocopy.TabIndex = 1;
-            this.chkAutocopy.Text = "Auto copy results";
+            this.chkAutocopy.Text = "Auto copy resulting text";
             this.chkAutocopy.UseVisualStyleBackColor = true;
             // 
             // tmrCopy
@@ -295,7 +303,7 @@
             this.chkScale.Location = new System.Drawing.Point(10, 38);
             this.chkScale.Name = "chkScale";
             this.chkScale.Size = new System.Drawing.Size(53, 17);
-            this.chkScale.TabIndex = 1;
+            this.chkScale.TabIndex = 2;
             this.chkScale.Text = "Scale";
             this.toolTip1.SetToolTip(this.chkScale, "If set to true, the api does some internal upscaling.\r\nThis can improve the OCR r" +
         "esult significantly,\r\nespecially for low-resolution PDF scans.");
@@ -307,7 +315,7 @@
             this.chkDetectOrientation.Location = new System.Drawing.Point(10, 15);
             this.chkDetectOrientation.Name = "chkDetectOrientation";
             this.chkDetectOrientation.Size = new System.Drawing.Size(110, 17);
-            this.chkDetectOrientation.TabIndex = 0;
+            this.chkDetectOrientation.TabIndex = 1;
             this.chkDetectOrientation.Text = "Detect orientation";
             this.toolTip1.SetToolTip(this.chkDetectOrientation, resources.GetString("chkDetectOrientation.ToolTip"));
             this.chkDetectOrientation.UseVisualStyleBackColor = true;
@@ -319,7 +327,7 @@
             this.rdbEngine3.Location = new System.Drawing.Point(132, 60);
             this.rdbEngine3.Name = "rdbEngine3";
             this.rdbEngine3.Size = new System.Drawing.Size(67, 17);
-            this.rdbEngine3.TabIndex = 5;
+            this.rdbEngine3.TabIndex = 6;
             this.rdbEngine3.Tag = "2";
             this.rdbEngine3.Text = "Engine 3";
             this.toolTip1.SetToolTip(this.rdbEngine3, resources.GetString("rdbEngine3.ToolTip"));
@@ -355,7 +363,7 @@
             this.rdbEngine2.Location = new System.Drawing.Point(132, 37);
             this.rdbEngine2.Name = "rdbEngine2";
             this.rdbEngine2.Size = new System.Drawing.Size(67, 17);
-            this.rdbEngine2.TabIndex = 4;
+            this.rdbEngine2.TabIndex = 5;
             this.rdbEngine2.Tag = "1";
             this.rdbEngine2.Text = "Engine 2";
             this.toolTip1.SetToolTip(this.rdbEngine2, resources.GetString("rdbEngine2.ToolTip"));
@@ -369,7 +377,7 @@
             this.rdbEngine1.Location = new System.Drawing.Point(132, 14);
             this.rdbEngine1.Name = "rdbEngine1";
             this.rdbEngine1.Size = new System.Drawing.Size(67, 17);
-            this.rdbEngine1.TabIndex = 3;
+            this.rdbEngine1.TabIndex = 4;
             this.rdbEngine1.Tag = "0";
             this.rdbEngine1.Text = "Engine 1";
             this.toolTip1.SetToolTip(this.rdbEngine1, resources.GetString("rdbEngine1.ToolTip"));
@@ -382,7 +390,7 @@
             this.chkIsTable.Location = new System.Drawing.Point(10, 61);
             this.chkIsTable.Name = "chkIsTable";
             this.chkIsTable.Size = new System.Drawing.Size(63, 17);
-            this.chkIsTable.TabIndex = 2;
+            this.chkIsTable.TabIndex = 3;
             this.chkIsTable.Text = "is Table";
             this.toolTip1.SetToolTip(this.chkIsTable, resources.GetString("chkIsTable.ToolTip"));
             this.chkIsTable.UseVisualStyleBackColor = true;
@@ -397,7 +405,7 @@
             this.rdbOCR1.Location = new System.Drawing.Point(473, 145);
             this.rdbOCR1.Name = "rdbOCR1";
             this.rdbOCR1.Size = new System.Drawing.Size(24, 18);
-            this.rdbOCR1.TabIndex = 9;
+            this.rdbOCR1.TabIndex = 7;
             this.rdbOCR1.TabStop = true;
             this.rdbOCR1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.rdbOCR1, "Activate");
@@ -413,7 +421,7 @@
             this.rdbOCR2.Location = new System.Drawing.Point(337, 145);
             this.rdbOCR2.Name = "rdbOCR2";
             this.rdbOCR2.Size = new System.Drawing.Size(24, 18);
-            this.rdbOCR2.TabIndex = 8;
+            this.rdbOCR2.TabIndex = 6;
             this.rdbOCR2.TabStop = true;
             this.rdbOCR2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.rdbOCR2, "Activate");
@@ -425,7 +433,7 @@
             this.btnInvoke1.Location = new System.Drawing.Point(32, 93);
             this.btnInvoke1.Name = "btnInvoke1";
             this.btnInvoke1.Size = new System.Drawing.Size(55, 23);
-            this.btnInvoke1.TabIndex = 2;
+            this.btnInvoke1.TabIndex = 9;
             this.btnInvoke1.Text = "invoke1";
             this.btnInvoke1.UseVisualStyleBackColor = true;
             this.btnInvoke1.Visible = false;
@@ -453,7 +461,7 @@
             this.linkLabel1.Location = new System.Drawing.Point(7, -1);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(54, 13);
-            this.linkLabel1.TabIndex = 7;
+            this.linkLabel1.TabIndex = 0;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "ocr.space";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
@@ -474,7 +482,7 @@
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(630, 22);
-            this.statusStrip1.TabIndex = 3;
+            this.statusStrip1.TabIndex = 10;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
@@ -483,6 +491,21 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(127, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(394, 17);
+            this.toolStripStatusLabel2.Spring = true;
+            this.toolStripStatusLabel2.Text = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolStripStatusLabel2.ToolTipText = "1234";
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(10, 17);
+            this.toolStripStatusLabel4.Text = "|";
             // 
             // toolStripStatusLabel3
             // 
@@ -512,20 +535,44 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // toolStripStatusLabel2
+            // chkScaleFactor
             // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(394, 17);
-            this.toolStripStatusLabel2.Spring = true;
-            this.toolStripStatusLabel2.Text = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolStripStatusLabel2.ToolTipText = "1234";
+            this.chkScaleFactor.AutoSize = true;
+            this.chkScaleFactor.Location = new System.Drawing.Point(212, 19);
+            this.chkScaleFactor.Name = "chkScaleFactor";
+            this.chkScaleFactor.Size = new System.Drawing.Size(83, 17);
+            this.chkScaleFactor.TabIndex = 5;
+            this.chkScaleFactor.Text = "Scale factor";
+            this.toolTip1.SetToolTip(this.chkScaleFactor, "Scale snapped image, which improves OCR results");
+            this.chkScaleFactor.UseVisualStyleBackColor = true;
             // 
-            // toolStripStatusLabel4
+            // nudScaleFactor
             // 
-            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(10, 17);
-            this.toolStripStatusLabel4.Text = "|";
+            this.nudScaleFactor.DecimalPlaces = 1;
+            this.nudScaleFactor.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            this.nudScaleFactor.Location = new System.Drawing.Point(308, 17);
+            this.nudScaleFactor.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.nudScaleFactor.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudScaleFactor.Name = "nudScaleFactor";
+            this.nudScaleFactor.Size = new System.Drawing.Size(56, 20);
+            this.nudScaleFactor.TabIndex = 6;
+            this.nudScaleFactor.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // Form1
             // 
@@ -563,6 +610,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudScaleFactor)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -612,6 +660,8 @@
         private System.Windows.Forms.CheckBox chkRemoveSpaces;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.NumericUpDown nudScaleFactor;
+        private System.Windows.Forms.CheckBox chkScaleFactor;
     }
 }
 
