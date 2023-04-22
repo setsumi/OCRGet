@@ -218,6 +218,7 @@ namespace OCRGet
                 _inidata["general"].AddKey("language", "16");
                 _inidata["general"].AddKey("autocopy", "True");
                 _inidata["general"].AddKey("autorecognize", "True");
+                _inidata["general"].AddKey("autorecognizeDelay", "0");
                 _inidata["general"].AddKey("restoreapp", "True");
                 _inidata["general"].AddKey("jpegquality", "95");
                 _inidata["general"].AddKey("clearcache", "False");
@@ -263,11 +264,14 @@ namespace OCRGet
             cmbLanguage.SelectedIndex = int.Parse(_inidata["general"]["language"]);
             chkAutocopy.Checked = bool.Parse(_inidata["general"]["autocopy"]);
             chkAutorecognize.Checked = bool.Parse(_inidata["general"]["autorecognize"]);
+            string v;
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autorecognizeDelay", out v);
+            udAutorecognize.Value = decimal.Parse(string.IsNullOrEmpty(v) ? "0" : v);
             chkRestore.Checked = bool.Parse(_inidata["general"]["restoreapp"]);
             udQuality.Value = decimal.Parse(_inidata["general"]["jpegquality"]);
             chkClearCache.Checked = bool.Parse(_inidata["general"]["clearcache"]);
             chkShowProgress.Checked = bool.Parse(_inidata["general"]["showprogress"]);
-            string v;
+            v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleCaptured", out v);
             chkScaleFactor.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "True" : v);
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleFactor", out v);
@@ -295,6 +299,7 @@ namespace OCRGet
             _inidata["general"]["language"] = cmbLanguage.SelectedIndex.ToString();
             _inidata["general"]["autocopy"] = chkAutocopy.Checked.ToString();
             _inidata["general"]["autorecognize"] = chkAutorecognize.Checked.ToString();
+            _inidata["general"]["autorecognizeDelay"] = udAutorecognize.Value.ToString();
             _inidata["general"]["restoreapp"] = chkRestore.Checked.ToString();
             _inidata["general"]["jpegquality"] = udQuality.Value.ToString();
             _inidata["general"]["clearcache"] = chkClearCache.Checked.ToString();
@@ -326,7 +331,23 @@ namespace OCRGet
             UiStatusMessage("Loaded " + p_imagesize, StatusMessageType.SM_Ok);
 
             if (chkAutorecognize.Checked)
-                Recognize();
+            {
+                int delay = (int)udAutorecognize.Value;
+                if (delay > 0)
+                {
+                    tmrAutorecognize.Interval = delay;
+                    tmrAutorecognize.Enabled = true;
+                }
+                else
+                {
+                    Recognize();
+                }
+            }
+        }
+        private void tmrAutorecognize_Tick(object sender, EventArgs e)
+        {
+            tmrAutorecognize.Enabled = false;
+            Recognize();
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -832,5 +853,6 @@ namespace OCRGet
                 Path.DirectorySeparatorChar + "Info.rtf");
             form.Show(this);
         }
+
     } // Form1
 }
