@@ -631,9 +631,10 @@ namespace OCRGet
             tmrCopy.Enabled = false;
             if (!string.IsNullOrWhiteSpace(txtResult.Text))
             {
+                var txt = (txtResult.SelectionLength > 0) ? txtResult.SelectedText : txtResult.Text;
                 try
                 {
-                    Clipboard.SetText(txtResult.Text);
+                    Clipboard.SetText(txt);
                 }
                 catch
                 {
