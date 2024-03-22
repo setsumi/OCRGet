@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+//using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
+//using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Net;
-using System.Collections.Specialized;
+//using System.Collections.Specialized;
 using Newtonsoft.Json;
 using System.Drawing.Imaging;
 using IniParser;
 using IniParser.Model;
 using System.Threading;
-using WindowsInput.Native;
+//using WindowsInput.Native;
 using WindowsInput;
 using ShareX.HelpersLib;
 using Windows.Media.Ocr;
-using Windows.Storage;
-using System.Threading.Tasks;
+//using Windows.Storage;
+//using System.Threading.Tasks;
 using Windows.Globalization;
 using Windows.Graphics.Imaging;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace OCRGet
 {
@@ -399,6 +399,7 @@ namespace OCRGet
             var engine = OcrEngine.TryCreateFromLanguage(language);
             var ocrResult = await engine.RecognizeAsync(bitmap).AsTask();
             p_resulttext = ocrResult.Text;
+            stream.Close(); // free the file
             RecognizeFinish();
 
             //var _engine = OcrEngine.TryCreateFromLanguage(new Language("en-US"));
@@ -705,6 +706,11 @@ namespace OCRGet
                 this.WindowState = FormWindowState.Minimized;
                 return true;
             }
+            else if (keyData == (Keys.Control | Keys.W)) // rewrite file
+            {
+                btnRewrite_Click(this, null);
+                return true;
+            }
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
@@ -855,5 +861,21 @@ namespace OCRGet
             form.Show(this);
         }
 
+        private void btnRewrite_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(p_imagepath)) return;
+
+            // free the file
+            pictureBox1.Image.Dispose();
+            FileStream fs = new FileStream(p_imagepath, FileMode.Open, FileAccess.ReadWrite);
+            byte[] data = new byte[fs.Length];
+            fs.Read(data, 0, data.Length);
+            fs.Write(data, 0, data.Length);
+            fs.Close();
+            // restore file image
+            pictureBox1.Image = Image.FromFile(p_imagepath);
+
+            UiStatusMessage("Rewritten: " + Path.GetFileName(p_imagepath), StatusMessageType.SM_Ok);
+        }
     } // Form1
 }

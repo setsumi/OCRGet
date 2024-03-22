@@ -77,6 +77,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.tmrAutorecognize = new System.Windows.Forms.Timer(this.components);
+            this.btnRewrite = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
@@ -613,12 +614,24 @@
             this.tmrAutorecognize.Interval = 1000;
             this.tmrAutorecognize.Tick += new System.EventHandler(this.tmrAutorecognize_Tick);
             // 
+            // btnRewrite
+            // 
+            this.btnRewrite.Location = new System.Drawing.Point(174, 11);
+            this.btnRewrite.Name = "btnRewrite";
+            this.btnRewrite.Size = new System.Drawing.Size(75, 23);
+            this.btnRewrite.TabIndex = 11;
+            this.btnRewrite.Text = "Re&write";
+            this.toolTip1.SetToolTip(this.btnRewrite, "Write image file again to update (Ctrl+W)");
+            this.btnRewrite.UseVisualStyleBackColor = true;
+            this.btnRewrite.Click += new System.EventHandler(this.btnRewrite_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(630, 377);
+            this.Controls.Add(this.btnRewrite);
             this.Controls.Add(this.btnRegion);
             this.Controls.Add(this.btnOpen);
             this.Controls.Add(this.rdbOCR1);
@@ -705,6 +718,7 @@
         private System.Windows.Forms.NumericUpDown udAutorecognize;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Timer tmrAutorecognize;
+        private System.Windows.Forms.Button btnRewrite;
     }
 }
 
