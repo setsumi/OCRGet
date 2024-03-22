@@ -65,6 +65,7 @@
             this.chkIsTable = new System.Windows.Forms.CheckBox();
             this.rdbOCR1 = new System.Windows.Forms.RadioButton();
             this.rdbOCR2 = new System.Windows.Forms.RadioButton();
+            this.btnRewrite = new System.Windows.Forms.Button();
             this.btnInvoke1 = new System.Windows.Forms.Button();
             this.grpbOCR = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -75,9 +76,9 @@
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnWinOcrInfo = new System.Windows.Forms.Button();
             this.tmrAutorecognize = new System.Windows.Forms.Timer(this.components);
-            this.btnRewrite = new System.Windows.Forms.Button();
+            this.btnWinOcrRecognize = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
@@ -501,6 +502,17 @@
             this.toolTip1.SetToolTip(this.rdbOCR2, "Activate");
             this.rdbOCR2.UseVisualStyleBackColor = true;
             // 
+            // btnRewrite
+            // 
+            this.btnRewrite.Location = new System.Drawing.Point(174, 11);
+            this.btnRewrite.Name = "btnRewrite";
+            this.btnRewrite.Size = new System.Drawing.Size(75, 23);
+            this.btnRewrite.TabIndex = 11;
+            this.btnRewrite.Text = "Re&write";
+            this.toolTip1.SetToolTip(this.btnRewrite, "Write image file again to update (Ctrl+W)");
+            this.btnRewrite.UseVisualStyleBackColor = true;
+            this.btnRewrite.Click += new System.EventHandler(this.btnRewrite_Click);
+            // 
             // btnInvoke1
             // 
             this.btnInvoke1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -591,7 +603,8 @@
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.button1);
+            this.groupBox1.Controls.Add(this.btnWinOcrRecognize);
+            this.groupBox1.Controls.Add(this.btnWinOcrInfo);
             this.groupBox1.Location = new System.Drawing.Point(245, 148);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(145, 86);
@@ -599,31 +612,30 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "WIndows OCR";
             // 
-            // button1
+            // btnWinOcrInfo
             // 
-            this.button1.Location = new System.Drawing.Point(32, 34);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Information";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnWinOcrInfo.Location = new System.Drawing.Point(118, 34);
+            this.btnWinOcrInfo.Name = "btnWinOcrInfo";
+            this.btnWinOcrInfo.Size = new System.Drawing.Size(21, 23);
+            this.btnWinOcrInfo.TabIndex = 0;
+            this.btnWinOcrInfo.Text = "?";
+            this.btnWinOcrInfo.UseVisualStyleBackColor = true;
+            this.btnWinOcrInfo.Click += new System.EventHandler(this.btnWinOcrInfo_Click);
             // 
             // tmrAutorecognize
             // 
             this.tmrAutorecognize.Interval = 1000;
             this.tmrAutorecognize.Tick += new System.EventHandler(this.tmrAutorecognize_Tick);
             // 
-            // btnRewrite
+            // btnWinOcrRecognize
             // 
-            this.btnRewrite.Location = new System.Drawing.Point(174, 11);
-            this.btnRewrite.Name = "btnRewrite";
-            this.btnRewrite.Size = new System.Drawing.Size(75, 23);
-            this.btnRewrite.TabIndex = 11;
-            this.btnRewrite.Text = "Re&write";
-            this.toolTip1.SetToolTip(this.btnRewrite, "Write image file again to update (Ctrl+W)");
-            this.btnRewrite.UseVisualStyleBackColor = true;
-            this.btnRewrite.Click += new System.EventHandler(this.btnRewrite_Click);
+            this.btnWinOcrRecognize.Location = new System.Drawing.Point(23, 34);
+            this.btnWinOcrRecognize.Name = "btnWinOcrRecognize";
+            this.btnWinOcrRecognize.Size = new System.Drawing.Size(75, 23);
+            this.btnWinOcrRecognize.TabIndex = 1;
+            this.btnWinOcrRecognize.Text = "Recognize";
+            this.btnWinOcrRecognize.UseVisualStyleBackColor = true;
+            this.btnWinOcrRecognize.Click += new System.EventHandler(this.btnWinOcrRecognize_Click);
             // 
             // Form1
             // 
@@ -704,7 +716,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.CheckBox chkRemoveLinebreaks;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnWinOcrInfo;
         private System.Windows.Forms.RadioButton rdbOCR1;
         private System.Windows.Forms.RadioButton rdbOCR2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
@@ -719,6 +731,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Timer tmrAutorecognize;
         private System.Windows.Forms.Button btnRewrite;
+        private System.Windows.Forms.Button btnWinOcrRecognize;
     }
 }
 

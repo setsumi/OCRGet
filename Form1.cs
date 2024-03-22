@@ -340,14 +340,14 @@ namespace OCRGet
                 }
                 else
                 {
-                    Recognize();
+                    Recognize(p_ocr);
                 }
             }
         }
         private void tmrAutorecognize_Tick(object sender, EventArgs e)
         {
             tmrAutorecognize.Enabled = false;
-            Recognize();
+            Recognize(p_ocr);
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -365,13 +365,13 @@ namespace OCRGet
             e.Graphics.DrawString("Requesting OCR responce...", new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold), Brushes.Lime, 0, 0);
         }
 
-        private void Recognize()
+        private void Recognize(int ocr)
         {
             txtResult.Text = "";
             p_resulttext = "";
-            p_language = getLanguage();
+            p_language = getLanguage(ocr);
 
-            switch (p_ocr)
+            switch (ocr)
             {
                 case 1:
                     RecognizeOcrSpace();
@@ -537,7 +537,7 @@ namespace OCRGet
         private void btnRecognize_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(p_imagepath)) return;
-            Recognize();
+            Recognize(p_ocr);
         }
 
         private void btnRegion_Click(object sender, EventArgs e)
@@ -603,12 +603,12 @@ namespace OCRGet
             SaveConfig();
         }
 
-        private string getLanguage()
+        private string getLanguage(int ocr)
         {
 
             var ln = _lnglist[cmbLanguage.SelectedIndex];
             string rv;
-            switch (p_ocr)
+            switch (ocr)
             {
                 case 1:
                     rv = ln.OcrSpace;
@@ -852,7 +852,7 @@ namespace OCRGet
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnWinOcrInfo_Click(object sender, EventArgs e)
         {
             var form = new FormHelp();
             form.Text = "Windows OCR Information";
@@ -864,18 +864,21 @@ namespace OCRGet
         private void btnRewrite_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(p_imagepath)) return;
+            if (!File.Exists(p_imagepath)) return;
 
             // free the file
             pictureBox1.Image.Dispose();
-            FileStream fs = new FileStream(p_imagepath, FileMode.Open, FileAccess.ReadWrite);
-            byte[] data = new byte[fs.Length];
-            fs.Read(data, 0, data.Length);
-            fs.Write(data, 0, data.Length);
-            fs.Close();
+            File.SetLastWriteTime(p_imagepath, DateTime.Now);
             // restore file image
             pictureBox1.Image = Image.FromFile(p_imagepath);
 
             UiStatusMessage("Rewritten: " + Path.GetFileName(p_imagepath), StatusMessageType.SM_Ok);
+        }
+
+        private void btnWinOcrRecognize_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(p_imagepath)) return;
+            Recognize(2); // Win OCR
         }
     } // Form1
 }
