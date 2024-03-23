@@ -181,6 +181,7 @@
             this.cmbLanguage.Name = "cmbLanguage";
             this.cmbLanguage.Size = new System.Drawing.Size(131, 21);
             this.cmbLanguage.TabIndex = 7;
+            this.cmbLanguage.SelectedValueChanged += new System.EventHandler(this.cmbLanguage_SelectedValueChanged);
             // 
             // grpbSettings
             // 
@@ -518,35 +519,44 @@
             // 
             // btnQuickLng3
             // 
+            this.btnQuickLng3.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.btnQuickLng3.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnQuickLng3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnQuickLng3.Location = new System.Drawing.Point(368, 11);
             this.btnQuickLng3.Name = "btnQuickLng3";
             this.btnQuickLng3.Size = new System.Drawing.Size(32, 23);
             this.btnQuickLng3.TabIndex = 6;
             this.btnQuickLng3.Text = "button1";
             this.toolTip1.SetToolTip(this.btnQuickLng3, "Quick Language 3");
-            this.btnQuickLng3.UseVisualStyleBackColor = true;
+            this.btnQuickLng3.UseVisualStyleBackColor = false;
             this.btnQuickLng3.Click += new System.EventHandler(this.btnQuickLng1_Click);
             // 
             // btnQuickLng2
             // 
+            this.btnQuickLng2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.btnQuickLng2.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnQuickLng2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnQuickLng2.Location = new System.Drawing.Point(331, 11);
             this.btnQuickLng2.Name = "btnQuickLng2";
             this.btnQuickLng2.Size = new System.Drawing.Size(32, 23);
             this.btnQuickLng2.TabIndex = 5;
             this.btnQuickLng2.Text = "button2";
             this.toolTip1.SetToolTip(this.btnQuickLng2, "Quick Language 2");
-            this.btnQuickLng2.UseVisualStyleBackColor = true;
+            this.btnQuickLng2.UseVisualStyleBackColor = false;
             this.btnQuickLng2.Click += new System.EventHandler(this.btnQuickLng1_Click);
             // 
             // btnQuickLng1
             // 
+            this.btnQuickLng1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.btnQuickLng1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnQuickLng1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnQuickLng1.Location = new System.Drawing.Point(294, 11);
             this.btnQuickLng1.Name = "btnQuickLng1";
             this.btnQuickLng1.Size = new System.Drawing.Size(32, 23);
             this.btnQuickLng1.TabIndex = 4;
             this.btnQuickLng1.Text = "button3";
             this.toolTip1.SetToolTip(this.btnQuickLng1, "Quick Language 1");
-            this.btnQuickLng1.UseVisualStyleBackColor = true;
+            this.btnQuickLng1.UseVisualStyleBackColor = false;
             this.btnQuickLng1.Click += new System.EventHandler(this.btnQuickLng1_Click);
             // 
             // btnInvoke1

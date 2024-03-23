@@ -150,6 +150,7 @@ namespace OCRGet
 
         private string p_language { get; set; }
         private string p_resulttext { get; set; }
+        private int p_nettimeout { get; set; }
 
         private FileIniDataParser _config;
         private IniData _inidata;
@@ -244,6 +245,8 @@ namespace OCRGet
                 _inidata["general"].AddKey("quicklang3", "16");
                 _inidata["general"].AddKey("quicklang3name", "jpn");
 
+                _inidata["general"].AddKey("nettimeout", "15");
+
                 _config.WriteFile(_inifile, _inidata);
             }
 
@@ -268,7 +271,6 @@ namespace OCRGet
             // Program options
             Font f = new Font(txtResult.Font.FontFamily, float.Parse(_inidata["general"]["fontsize"]));
             txtResult.Font = f;
-            cmbLanguage.SelectedIndex = int.Parse(_inidata["general"]["language"]);
             chkAutocopy.Checked = bool.Parse(_inidata["general"]["autocopy"]);
             chkAutorecognize.Checked = bool.Parse(_inidata["general"]["autorecognize"]);
             string v;
@@ -296,21 +298,25 @@ namespace OCRGet
             p_engine = int.Parse(_inidata["general"]["engine"]);
             p_ocr = int.Parse(_inidata["general"]["ocr"]);
 
-            string sv = _inidata["general"]["quicklang1"];
-            btnQuickLng1.Tag = sv == null ? -1 : int.Parse(sv);
-            sv = _inidata["general"]["quicklang2"];
-            btnQuickLng2.Tag = sv == null ? -1 : int.Parse(sv);
-            sv = _inidata["general"]["quicklang3"];
-            btnQuickLng3.Tag = sv == null ? -1 : int.Parse(sv);
-            sv = _inidata["general"]["quicklang1name"];
-            btnQuickLng1.Text = sv == null ? "" : sv;
-            sv = _inidata["general"]["quicklang2name"];
-            btnQuickLng2.Text = sv == null ? "" : sv;
-            sv = _inidata["general"]["quicklang3name"];
-            btnQuickLng3.Text = sv == null ? "" : sv;
+            v = _inidata["general"]["quicklang1"];
+            btnQuickLng1.Tag = v == null ? -1 : int.Parse(v);
+            v = _inidata["general"]["quicklang2"];
+            btnQuickLng2.Tag = v == null ? -1 : int.Parse(v);
+            v = _inidata["general"]["quicklang3"];
+            btnQuickLng3.Tag = v == null ? -1 : int.Parse(v);
+            v = _inidata["general"]["quicklang1name"];
+            btnQuickLng1.Text = v == null ? "" : v;
+            v = _inidata["general"]["quicklang2name"];
+            btnQuickLng2.Text = v == null ? "" : v;
+            v = _inidata["general"]["quicklang3name"];
+            btnQuickLng3.Text = v == null ? "" : v;
             if ((int)btnQuickLng1.Tag >= 0) toolTip1.SetToolTip(btnQuickLng1, _lnglist[(int)btnQuickLng1.Tag].Name);
             if ((int)btnQuickLng2.Tag >= 0) toolTip1.SetToolTip(btnQuickLng2, _lnglist[(int)btnQuickLng2.Tag].Name);
             if ((int)btnQuickLng3.Tag >= 0) toolTip1.SetToolTip(btnQuickLng3, _lnglist[(int)btnQuickLng3.Tag].Name);
+            cmbLanguage.SelectedIndex = int.Parse(_inidata["general"]["language"]);
+
+            v = _inidata["general"]["nettimeout"];
+            p_nettimeout = v == null ? 15 : int.Parse(v);
             //}
             //catch { }
         }
@@ -347,6 +353,8 @@ namespace OCRGet
             _inidata["general"]["quicklang2name"] = btnQuickLng2.Text;
             _inidata["general"]["quicklang3"] = btnQuickLng3.Tag.ToString();
             _inidata["general"]["quicklang3name"] = btnQuickLng3.Text;
+
+            _inidata["general"]["nettimeout"] = p_nettimeout.ToString();
 
             _config.WriteFile(_inifile, _inidata);
         }
@@ -397,6 +405,9 @@ namespace OCRGet
 
         private void Recognize(int ocr)
         {
+            txtResult.Focus();
+            txtResult.SelectionLength = 0;
+
             txtResult.Text = "";
             p_resulttext = "";
             p_language = getLanguage(ocr);
@@ -491,7 +502,8 @@ namespace OCRGet
             HttpWebResponse webResponse;
             try
             {
-                webResponse = FormUpload.MultipartFormDataPost(form.p_cred.Url, form.p_cred.Useragent, postParameters);
+                webResponse = FormUpload.MultipartFormDataPost(form.p_cred.Url, form.p_cred.Useragent,
+                    postParameters, form.p_nettimeout * 1000);
             }
             catch (Exception e)
             {
@@ -917,6 +929,17 @@ namespace OCRGet
             if (button.Tag == null) return;
             if ((int)button.Tag < 0) return;
             cmbLanguage.SelectedIndex = (int)button.Tag;
+        }
+
+        private void cmbLanguage_SelectedValueChanged(object sender, EventArgs e)
+        {
+            int index = cmbLanguage.SelectedIndex;
+            btnQuickLng1.BackColor = SystemColors.ControlLight;
+            btnQuickLng2.BackColor = SystemColors.ControlLight;
+            btnQuickLng3.BackColor = SystemColors.ControlLight;
+            if (index == (int)btnQuickLng1.Tag) btnQuickLng1.BackColor = Color.FromArgb(192, 255, 255);
+            if (index == (int)btnQuickLng2.Tag) btnQuickLng2.BackColor = Color.FromArgb(192, 255, 255);
+            if (index == (int)btnQuickLng3.Tag) btnQuickLng3.BackColor = Color.FromArgb(192, 255, 255);
         }
     } // Form1
 }
