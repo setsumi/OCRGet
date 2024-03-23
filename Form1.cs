@@ -237,6 +237,13 @@ namespace OCRGet
                 _inidata["general"].AddKey("engine2cred", "0");
                 _inidata["general"].AddKey("engine3cred", "0");
 
+                _inidata["general"].AddKey("quicklang1", "-1");
+                _inidata["general"].AddKey("quicklang1name", "");
+                _inidata["general"].AddKey("quicklang2", "8");
+                _inidata["general"].AddKey("quicklang2name", "eng");
+                _inidata["general"].AddKey("quicklang3", "16");
+                _inidata["general"].AddKey("quicklang3name", "jpn");
+
                 _config.WriteFile(_inifile, _inidata);
             }
 
@@ -288,6 +295,22 @@ namespace OCRGet
             _enginecreds[2] = int.Parse(_inidata["general"]["engine3cred"]);
             p_engine = int.Parse(_inidata["general"]["engine"]);
             p_ocr = int.Parse(_inidata["general"]["ocr"]);
+
+            string sv = _inidata["general"]["quicklang1"];
+            btnQuickLng1.Tag = sv == null ? -1 : int.Parse(sv);
+            sv = _inidata["general"]["quicklang2"];
+            btnQuickLng2.Tag = sv == null ? -1 : int.Parse(sv);
+            sv = _inidata["general"]["quicklang3"];
+            btnQuickLng3.Tag = sv == null ? -1 : int.Parse(sv);
+            sv = _inidata["general"]["quicklang1name"];
+            btnQuickLng1.Text = sv == null ? "" : sv;
+            sv = _inidata["general"]["quicklang2name"];
+            btnQuickLng2.Text = sv == null ? "" : sv;
+            sv = _inidata["general"]["quicklang3name"];
+            btnQuickLng3.Text = sv == null ? "" : sv;
+            if ((int)btnQuickLng1.Tag >= 0) toolTip1.SetToolTip(btnQuickLng1, _lnglist[(int)btnQuickLng1.Tag].Name);
+            if ((int)btnQuickLng2.Tag >= 0) toolTip1.SetToolTip(btnQuickLng2, _lnglist[(int)btnQuickLng2.Tag].Name);
+            if ((int)btnQuickLng3.Tag >= 0) toolTip1.SetToolTip(btnQuickLng3, _lnglist[(int)btnQuickLng3.Tag].Name);
             //}
             //catch { }
         }
@@ -317,6 +340,13 @@ namespace OCRGet
             _inidata["general"]["engine1cred"] = _enginecreds[0].ToString();
             _inidata["general"]["engine2cred"] = _enginecreds[1].ToString();
             _inidata["general"]["engine3cred"] = _enginecreds[2].ToString();
+
+            _inidata["general"]["quicklang1"] = btnQuickLng1.Tag.ToString();
+            _inidata["general"]["quicklang1name"] = btnQuickLng1.Text;
+            _inidata["general"]["quicklang2"] = btnQuickLng2.Tag.ToString();
+            _inidata["general"]["quicklang2name"] = btnQuickLng2.Text;
+            _inidata["general"]["quicklang3"] = btnQuickLng3.Tag.ToString();
+            _inidata["general"]["quicklang3name"] = btnQuickLng3.Text;
 
             _config.WriteFile(_inifile, _inidata);
         }
@@ -879,6 +909,14 @@ namespace OCRGet
         {
             if (string.IsNullOrEmpty(p_imagepath)) return;
             Recognize(2); // Win OCR
+        }
+
+        private void btnQuickLng1_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            if (button.Tag == null) return;
+            if ((int)button.Tag < 0) return;
+            cmbLanguage.SelectedIndex = (int)button.Tag;
         }
     } // Form1
 }

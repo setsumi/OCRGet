@@ -66,6 +66,9 @@
             this.rdbOCR1 = new System.Windows.Forms.RadioButton();
             this.rdbOCR2 = new System.Windows.Forms.RadioButton();
             this.btnRewrite = new System.Windows.Forms.Button();
+            this.btnQuickLng3 = new System.Windows.Forms.Button();
+            this.btnQuickLng2 = new System.Windows.Forms.Button();
+            this.btnQuickLng1 = new System.Windows.Forms.Button();
             this.btnInvoke1 = new System.Windows.Forms.Button();
             this.grpbOCR = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -76,9 +79,9 @@
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnWinOcrRecognize = new System.Windows.Forms.Button();
             this.btnWinOcrInfo = new System.Windows.Forms.Button();
             this.tmrAutorecognize = new System.Windows.Forms.Timer(this.components);
-            this.btnWinOcrRecognize = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
@@ -112,14 +115,14 @@
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtResult.Size = new System.Drawing.Size(287, 97);
-            this.txtResult.TabIndex = 5;
+            this.txtResult.TabIndex = 9;
             // 
             // btnRecognize
             // 
             this.btnRecognize.Location = new System.Drawing.Point(245, 73);
             this.btnRecognize.Name = "btnRecognize";
             this.btnRecognize.Size = new System.Drawing.Size(75, 30);
-            this.btnRecognize.TabIndex = 2;
+            this.btnRecognize.TabIndex = 3;
             this.btnRecognize.Text = "&Recognize";
             this.toolTip1.SetToolTip(this.btnRecognize, "(Ctrl+R)");
             this.btnRecognize.UseVisualStyleBackColor = true;
@@ -159,7 +162,7 @@
             this.btnCopy.Location = new System.Drawing.Point(543, 11);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new System.Drawing.Size(75, 23);
-            this.btnCopy.TabIndex = 4;
+            this.btnCopy.TabIndex = 8;
             this.btnCopy.Text = "&Copy";
             this.toolTip1.SetToolTip(this.btnCopy, "Copy Recognized Text (Ctrl+C)");
             this.btnCopy.UseVisualStyleBackColor = true;
@@ -177,7 +180,7 @@
             this.cmbLanguage.Location = new System.Drawing.Point(406, 11);
             this.cmbLanguage.Name = "cmbLanguage";
             this.cmbLanguage.Size = new System.Drawing.Size(131, 21);
-            this.cmbLanguage.TabIndex = 3;
+            this.cmbLanguage.TabIndex = 7;
             // 
             // grpbSettings
             // 
@@ -198,7 +201,7 @@
             this.grpbSettings.Location = new System.Drawing.Point(245, 236);
             this.grpbSettings.Name = "grpbSettings";
             this.grpbSettings.Size = new System.Drawing.Size(373, 112);
-            this.grpbSettings.TabIndex = 8;
+            this.grpbSettings.TabIndex = 14;
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Program settings";
             // 
@@ -480,7 +483,7 @@
             this.rdbOCR1.Location = new System.Drawing.Point(473, 145);
             this.rdbOCR1.Name = "rdbOCR1";
             this.rdbOCR1.Size = new System.Drawing.Size(24, 18);
-            this.rdbOCR1.TabIndex = 7;
+            this.rdbOCR1.TabIndex = 12;
             this.rdbOCR1.TabStop = true;
             this.rdbOCR1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.rdbOCR1, "Activate");
@@ -496,7 +499,7 @@
             this.rdbOCR2.Location = new System.Drawing.Point(337, 145);
             this.rdbOCR2.Name = "rdbOCR2";
             this.rdbOCR2.Size = new System.Drawing.Size(24, 18);
-            this.rdbOCR2.TabIndex = 6;
+            this.rdbOCR2.TabIndex = 10;
             this.rdbOCR2.TabStop = true;
             this.rdbOCR2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.rdbOCR2, "Activate");
@@ -507,11 +510,44 @@
             this.btnRewrite.Location = new System.Drawing.Point(174, 11);
             this.btnRewrite.Name = "btnRewrite";
             this.btnRewrite.Size = new System.Drawing.Size(75, 23);
-            this.btnRewrite.TabIndex = 11;
+            this.btnRewrite.TabIndex = 2;
             this.btnRewrite.Text = "Re&write";
             this.toolTip1.SetToolTip(this.btnRewrite, "Write image file again to update (Ctrl+W)");
             this.btnRewrite.UseVisualStyleBackColor = true;
             this.btnRewrite.Click += new System.EventHandler(this.btnRewrite_Click);
+            // 
+            // btnQuickLng3
+            // 
+            this.btnQuickLng3.Location = new System.Drawing.Point(368, 11);
+            this.btnQuickLng3.Name = "btnQuickLng3";
+            this.btnQuickLng3.Size = new System.Drawing.Size(32, 23);
+            this.btnQuickLng3.TabIndex = 6;
+            this.btnQuickLng3.Text = "button1";
+            this.toolTip1.SetToolTip(this.btnQuickLng3, "Quick Language 3");
+            this.btnQuickLng3.UseVisualStyleBackColor = true;
+            this.btnQuickLng3.Click += new System.EventHandler(this.btnQuickLng1_Click);
+            // 
+            // btnQuickLng2
+            // 
+            this.btnQuickLng2.Location = new System.Drawing.Point(331, 11);
+            this.btnQuickLng2.Name = "btnQuickLng2";
+            this.btnQuickLng2.Size = new System.Drawing.Size(32, 23);
+            this.btnQuickLng2.TabIndex = 5;
+            this.btnQuickLng2.Text = "button2";
+            this.toolTip1.SetToolTip(this.btnQuickLng2, "Quick Language 2");
+            this.btnQuickLng2.UseVisualStyleBackColor = true;
+            this.btnQuickLng2.Click += new System.EventHandler(this.btnQuickLng1_Click);
+            // 
+            // btnQuickLng1
+            // 
+            this.btnQuickLng1.Location = new System.Drawing.Point(294, 11);
+            this.btnQuickLng1.Name = "btnQuickLng1";
+            this.btnQuickLng1.Size = new System.Drawing.Size(32, 23);
+            this.btnQuickLng1.TabIndex = 4;
+            this.btnQuickLng1.Text = "button3";
+            this.toolTip1.SetToolTip(this.btnQuickLng1, "Quick Language 1");
+            this.btnQuickLng1.UseVisualStyleBackColor = true;
+            this.btnQuickLng1.Click += new System.EventHandler(this.btnQuickLng1_Click);
             // 
             // btnInvoke1
             // 
@@ -519,7 +555,7 @@
             this.btnInvoke1.Location = new System.Drawing.Point(32, 93);
             this.btnInvoke1.Name = "btnInvoke1";
             this.btnInvoke1.Size = new System.Drawing.Size(55, 23);
-            this.btnInvoke1.TabIndex = 9;
+            this.btnInvoke1.TabIndex = 16;
             this.btnInvoke1.Text = "invoke1";
             this.btnInvoke1.UseVisualStyleBackColor = true;
             this.btnInvoke1.Visible = false;
@@ -538,7 +574,7 @@
             this.grpbOCR.Location = new System.Drawing.Point(406, 148);
             this.grpbOCR.Name = "grpbOCR";
             this.grpbOCR.Size = new System.Drawing.Size(212, 86);
-            this.grpbOCR.TabIndex = 7;
+            this.grpbOCR.TabIndex = 13;
             this.grpbOCR.TabStop = false;
             // 
             // linkLabel1
@@ -568,7 +604,7 @@
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(630, 22);
-            this.statusStrip1.TabIndex = 10;
+            this.statusStrip1.TabIndex = 15;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
@@ -608,16 +644,26 @@
             this.groupBox1.Location = new System.Drawing.Point(245, 148);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(145, 86);
-            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "WIndows OCR";
+            // 
+            // btnWinOcrRecognize
+            // 
+            this.btnWinOcrRecognize.Location = new System.Drawing.Point(23, 34);
+            this.btnWinOcrRecognize.Name = "btnWinOcrRecognize";
+            this.btnWinOcrRecognize.Size = new System.Drawing.Size(75, 23);
+            this.btnWinOcrRecognize.TabIndex = 0;
+            this.btnWinOcrRecognize.Text = "Recognize";
+            this.btnWinOcrRecognize.UseVisualStyleBackColor = true;
+            this.btnWinOcrRecognize.Click += new System.EventHandler(this.btnWinOcrRecognize_Click);
             // 
             // btnWinOcrInfo
             // 
             this.btnWinOcrInfo.Location = new System.Drawing.Point(118, 34);
             this.btnWinOcrInfo.Name = "btnWinOcrInfo";
             this.btnWinOcrInfo.Size = new System.Drawing.Size(21, 23);
-            this.btnWinOcrInfo.TabIndex = 0;
+            this.btnWinOcrInfo.TabIndex = 1;
             this.btnWinOcrInfo.Text = "?";
             this.btnWinOcrInfo.UseVisualStyleBackColor = true;
             this.btnWinOcrInfo.Click += new System.EventHandler(this.btnWinOcrInfo_Click);
@@ -627,22 +673,15 @@
             this.tmrAutorecognize.Interval = 1000;
             this.tmrAutorecognize.Tick += new System.EventHandler(this.tmrAutorecognize_Tick);
             // 
-            // btnWinOcrRecognize
-            // 
-            this.btnWinOcrRecognize.Location = new System.Drawing.Point(23, 34);
-            this.btnWinOcrRecognize.Name = "btnWinOcrRecognize";
-            this.btnWinOcrRecognize.Size = new System.Drawing.Size(75, 23);
-            this.btnWinOcrRecognize.TabIndex = 1;
-            this.btnWinOcrRecognize.Text = "Recognize";
-            this.btnWinOcrRecognize.UseVisualStyleBackColor = true;
-            this.btnWinOcrRecognize.Click += new System.EventHandler(this.btnWinOcrRecognize_Click);
-            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(630, 377);
+            this.Controls.Add(this.btnQuickLng1);
+            this.Controls.Add(this.btnQuickLng2);
+            this.Controls.Add(this.btnQuickLng3);
             this.Controls.Add(this.btnRewrite);
             this.Controls.Add(this.btnRegion);
             this.Controls.Add(this.btnOpen);
@@ -732,6 +771,9 @@
         private System.Windows.Forms.Timer tmrAutorecognize;
         private System.Windows.Forms.Button btnRewrite;
         private System.Windows.Forms.Button btnWinOcrRecognize;
+        private System.Windows.Forms.Button btnQuickLng3;
+        private System.Windows.Forms.Button btnQuickLng2;
+        private System.Windows.Forms.Button btnQuickLng1;
     }
 }
 
