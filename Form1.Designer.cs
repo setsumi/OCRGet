@@ -519,6 +519,7 @@
             // 
             // btnQuickLng3
             // 
+            this.btnQuickLng3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuickLng3.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnQuickLng3.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.btnQuickLng3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -533,6 +534,7 @@
             // 
             // btnQuickLng2
             // 
+            this.btnQuickLng2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuickLng2.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnQuickLng2.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.btnQuickLng2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -547,6 +549,7 @@
             // 
             // btnQuickLng1
             // 
+            this.btnQuickLng1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuickLng1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnQuickLng1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.btnQuickLng1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;

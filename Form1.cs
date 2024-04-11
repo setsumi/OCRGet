@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-//using System.Data;
 using System.Drawing;
 using System.Linq;
-//using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Net;
-//using System.Collections.Specialized;
 using Newtonsoft.Json;
 using System.Drawing.Imaging;
 using IniParser;
 using IniParser.Model;
 using System.Threading;
-//using WindowsInput.Native;
 using WindowsInput;
 using ShareX.HelpersLib;
 using Windows.Media.Ocr;
-//using Windows.Storage;
-//using System.Threading.Tasks;
 using Windows.Globalization;
 using Windows.Graphics.Imaging;
-//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace OCRGet
 {
@@ -30,6 +25,21 @@ namespace OCRGet
 
     public partial class Form1 : Form
     {
+        // P/Invoke constants
+        private const int WM_SYSCOMMAND = 0x112;
+        private const int MF_STRING = 0x0;
+        private const int MF_SEPARATOR = 0x800;
+        // P/Invoke declarations
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool AppendMenu(IntPtr hMenu, int uFlags, int uIDNewItem, string lpNewItem);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool InsertMenu(IntPtr hMenu, int uPosition, int uFlags, int uIDNewItem, string lpNewItem);
+
+        // ID for the Open item on the system menu
+        private const int SYSMENU_OPEN_ID = 0x1;
+
         struct Credential
         {
             public string Name, Url, Key, Useragent;
@@ -811,7 +821,19 @@ namespace OCRGet
                     btnRegion_Click(this, null);
                 return;
             }
+
             base.WndProc(ref m);
+
+            if ((m.Msg == WM_SYSCOMMAND) && ((int)m.WParam == SYSMENU_OPEN_ID))
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = getCacheDir(),
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
+
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -940,6 +962,15 @@ namespace OCRGet
             if (index == (int)btnQuickLng1.Tag) btnQuickLng1.BackColor = Color.FromArgb(192, 255, 255);
             if (index == (int)btnQuickLng2.Tag) btnQuickLng2.BackColor = Color.FromArgb(192, 255, 255);
             if (index == (int)btnQuickLng3.Tag) btnQuickLng3.BackColor = Color.FromArgb(192, 255, 255);
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+
+            IntPtr hSysMenu = GetSystemMenu(this.Handle, false);
+            AppendMenu(hSysMenu, MF_SEPARATOR, 0, string.Empty);
+            AppendMenu(hSysMenu, MF_STRING, SYSMENU_OPEN_ID, "&Open cache folder");
         }
     } // Form1
 }
