@@ -164,8 +164,11 @@ namespace OCRGet
 
         private FileIniDataParser _config;
         private IniData _inidata;
-        private String _inifile;
+        private string _inifile;
         private int _hotkeyID = 0;
+        private FileSystemWatcher _watcher;
+        private string _autoloadFile = "";
+        private string[] _imageExtensions = { ".jpg", ".jpeg", ".png" };
 
         public Form1()
         {
@@ -189,14 +192,32 @@ namespace OCRGet
                 Directory.CreateDirectory(getCacheDir());
             }
 
+            _watcher = new FileSystemWatcher(getCacheDir());
+            _watcher.NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.FileName |
+                NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Size;
+            _watcher.Changed += WatcherOnChanged;
+            _watcher.Created += WatcherOnChanged;
+            _watcher.Renamed += WatcherOnRenamed;
+            _watcher.IncludeSubdirectories = true;
+
             LoadConfig();
 
             // clear cache
             if (chkClearCache.Checked)
             {
-                foreach (string f in Directory.EnumerateFiles(getCacheDir(), "*.jpg"))
+                string path = getCacheDir();
+                string[] wildcards = _imageExtensions.Select(item => "*" + item).ToArray();
+                var result = wildcards
+                    .SelectMany(wc => Directory.EnumerateFiles(path, wc, SearchOption.AllDirectories))
+                    .ToList();
+                foreach (var file in result)
                 {
-                    File.Delete(f);
+                    if (File.Exists(file))
+                    {
+                        Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file,
+                            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                            Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                    }
                 }
             }
 
@@ -293,6 +314,7 @@ namespace OCRGet
             v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleCaptured", out v);
             chkScaleFactor.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "True" : v);
+            v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleFactor", out v);
             nudScaleFactor.Value = decimal.Parse(string.IsNullOrEmpty(v) ? "2" : v);
 
@@ -327,6 +349,12 @@ namespace OCRGet
 
             v = _inidata["general"]["nettimeout"];
             p_nettimeout = v == null ? 15 : int.Parse(v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autoload", out v);
+            chkAutoLoad.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autoloadrestoreapp", out v);
+            chkRestoreAutoLoad.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
             //}
             //catch { }
         }
@@ -365,6 +393,8 @@ namespace OCRGet
             _inidata["general"]["quicklang3name"] = btnQuickLng3.Text;
 
             _inidata["general"]["nettimeout"] = p_nettimeout.ToString();
+            _inidata["general"]["autoload"] = chkAutoLoad.Checked.ToString();
+            _inidata["general"]["autoloadrestoreapp"] = chkRestoreAutoLoad.Checked.ToString();
 
             _config.WriteFile(_inifile, _inidata);
         }
@@ -372,6 +402,7 @@ namespace OCRGet
         private void OpenFile(string file)
         {
             p_imagepath = file;
+            pictureBox1.Image?.Dispose();
             pictureBox1.Image = Image.FromFile(p_imagepath);
             FileInfo fileInfo = new FileInfo(p_imagepath);
             this.Text = "OCRGet - " + fileInfo.Name;
@@ -401,7 +432,7 @@ namespace OCRGet
         private void btnOpen_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDlg = new OpenFileDialog();
-            fileDlg.Filter = "JPEG files(*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            fileDlg.Filter = "Images(.jpg;.jpeg;.png)|*.jpg;*.jpeg;*.png";
             if (fileDlg.ShowDialog() == DialogResult.OK)
             {
                 OpenFile(fileDlg.FileName);
@@ -630,9 +661,13 @@ namespace OCRGet
                             (int)(bmp.Height * (float)nudScaleFactor.Value));
                     }
 
+                    if (chkAutoLoad.Checked)
+                        _watcher.EnableRaisingEvents = false;
                     // save image to file
                     p_imagepath = getCacheDir() + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff") + ".jpg";
                     Jpeg.Save(bmpResult, p_imagepath, (long)udQuality.Value);
+                    if (chkAutoLoad.Checked)
+                        _watcher.EnableRaisingEvents = true;
                 }
 
                 OpenFile(p_imagepath);
@@ -930,11 +965,15 @@ namespace OCRGet
             if (string.IsNullOrEmpty(p_imagepath)) return;
             if (!File.Exists(p_imagepath)) return;
 
+            if (chkAutoLoad.Checked)
+                _watcher.EnableRaisingEvents = false;
             // free the file
             pictureBox1.Image.Dispose();
             File.SetLastWriteTime(p_imagepath, DateTime.Now);
             // restore file image
             pictureBox1.Image = Image.FromFile(p_imagepath);
+            if (chkAutoLoad.Checked)
+                _watcher.EnableRaisingEvents = true;
 
             UiStatusMessage("Rewritten: " + Path.GetFileName(p_imagepath), StatusMessageType.SM_Ok);
         }
@@ -971,6 +1010,63 @@ namespace OCRGet
             IntPtr hSysMenu = GetSystemMenu(this.Handle, false);
             AppendMenu(hSysMenu, MF_SEPARATOR, 0, string.Empty);
             AppendMenu(hSysMenu, MF_STRING, SYSMENU_OPEN_ID, "&Open cache folder");
+        }
+
+        private void chkAutoLoad_CheckedChanged(object sender, EventArgs e)
+        {
+            _watcher.EnableRaisingEvents = chkAutoLoad.Checked;
+        }
+
+        private void WatcherOnChanged(object sender, FileSystemEventArgs e)
+        {
+            if (Directory.Exists(e.FullPath))
+                return;
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Created:
+                case WatcherChangeTypes.Changed:
+                    Invoke((MethodInvoker)delegate
+                    {
+                        tmrAutoload.Stop();
+                        _autoloadFile = e.FullPath;
+                        tmrAutoload.Start();
+                    });
+                    break;
+            }
+        }
+
+        private void WatcherOnRenamed(object source, RenamedEventArgs e)
+        {
+            if (Directory.Exists(e.FullPath) || Directory.Exists(e.OldFullPath))
+                return;
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Renamed:
+                    Invoke((MethodInvoker)delegate
+                    {
+                        tmrAutoload.Stop();
+                        _autoloadFile = e.FullPath;
+                        tmrAutoload.Start();
+                    });
+                    break;
+            }
+        }
+
+        private void tmrAutoload_Tick(object sender, EventArgs e)
+        {
+            tmrAutoload.Stop();
+
+            var extension = Path.GetExtension(_autoloadFile).ToLower();
+            if (!string.IsNullOrEmpty(extension) && _imageExtensions.Any(ext => ext == extension))
+            {
+                OpenFile(_autoloadFile);
+                if (chkRestoreAutoLoad.Checked)
+                {
+                    if (this.WindowState == FormWindowState.Minimized)
+                        this.WindowState = FormWindowState.Normal;
+                    this.Activate();
+                }
+            }
         }
     } // Form1
 }

@@ -39,6 +39,7 @@
             this.btnCopy = new System.Windows.Forms.Button();
             this.cmbLanguage = new System.Windows.Forms.ComboBox();
             this.grpbSettings = new System.Windows.Forms.GroupBox();
+            this.chkAutoLoad = new System.Windows.Forms.CheckBox();
             this.udAutorecognize = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.nudScaleFactor = new System.Windows.Forms.NumericUpDown();
@@ -82,6 +83,8 @@
             this.btnWinOcrRecognize = new System.Windows.Forms.Button();
             this.btnWinOcrInfo = new System.Windows.Forms.Button();
             this.tmrAutorecognize = new System.Windows.Forms.Timer(this.components);
+            this.tmrAutoload = new System.Windows.Forms.Timer(this.components);
+            this.chkRestoreAutoLoad = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
@@ -114,7 +117,7 @@
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(287, 97);
+            this.txtResult.Size = new System.Drawing.Size(287, 95);
             this.txtResult.TabIndex = 9;
             // 
             // btnRecognize
@@ -135,7 +138,7 @@
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(12, 41);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(224, 307);
+            this.pictureBox1.Size = new System.Drawing.Size(224, 329);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -186,6 +189,8 @@
             // grpbSettings
             // 
             this.grpbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbSettings.Controls.Add(this.chkRestoreAutoLoad);
+            this.grpbSettings.Controls.Add(this.chkAutoLoad);
             this.grpbSettings.Controls.Add(this.udAutorecognize);
             this.grpbSettings.Controls.Add(this.label2);
             this.grpbSettings.Controls.Add(this.nudScaleFactor);
@@ -199,12 +204,24 @@
             this.grpbSettings.Controls.Add(this.chkRestore);
             this.grpbSettings.Controls.Add(this.chkAutorecognize);
             this.grpbSettings.Controls.Add(this.chkAutocopy);
-            this.grpbSettings.Location = new System.Drawing.Point(245, 236);
+            this.grpbSettings.Location = new System.Drawing.Point(245, 234);
             this.grpbSettings.Name = "grpbSettings";
-            this.grpbSettings.Size = new System.Drawing.Size(373, 112);
+            this.grpbSettings.Size = new System.Drawing.Size(373, 136);
             this.grpbSettings.TabIndex = 14;
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Program settings";
+            // 
+            // chkAutoLoad
+            // 
+            this.chkAutoLoad.AutoSize = true;
+            this.chkAutoLoad.Location = new System.Drawing.Point(6, 110);
+            this.chkAutoLoad.Name = "chkAutoLoad";
+            this.chkAutoLoad.Size = new System.Drawing.Size(163, 17);
+            this.chkAutoLoad.TabIndex = 13;
+            this.chkAutoLoad.Text = "Auto load images from cache";
+            this.toolTip1.SetToolTip(this.chkAutoLoad, "Load file placed into cache folder by another application");
+            this.chkAutoLoad.UseVisualStyleBackColor = true;
+            this.chkAutoLoad.CheckedChanged += new System.EventHandler(this.chkAutoLoad_CheckedChanged);
             // 
             // udAutorecognize
             // 
@@ -481,7 +498,7 @@
             this.rdbOCR1.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.rdbOCR1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.rdbOCR1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.rdbOCR1.Location = new System.Drawing.Point(473, 145);
+            this.rdbOCR1.Location = new System.Drawing.Point(473, 143);
             this.rdbOCR1.Name = "rdbOCR1";
             this.rdbOCR1.Size = new System.Drawing.Size(24, 18);
             this.rdbOCR1.TabIndex = 12;
@@ -497,7 +514,7 @@
             this.rdbOCR2.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.rdbOCR2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.rdbOCR2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.rdbOCR2.Location = new System.Drawing.Point(337, 145);
+            this.rdbOCR2.Location = new System.Drawing.Point(337, 143);
             this.rdbOCR2.Name = "rdbOCR2";
             this.rdbOCR2.Size = new System.Drawing.Size(24, 18);
             this.rdbOCR2.TabIndex = 10;
@@ -564,8 +581,7 @@
             // 
             // btnInvoke1
             // 
-            this.btnInvoke1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnInvoke1.Location = new System.Drawing.Point(32, 93);
+            this.btnInvoke1.Location = new System.Drawing.Point(32, 77);
             this.btnInvoke1.Name = "btnInvoke1";
             this.btnInvoke1.Size = new System.Drawing.Size(55, 23);
             this.btnInvoke1.TabIndex = 16;
@@ -584,7 +600,7 @@
             this.grpbOCR.Controls.Add(this.rdbEngine3);
             this.grpbOCR.Controls.Add(this.rdbEngine2);
             this.grpbOCR.Controls.Add(this.rdbEngine1);
-            this.grpbOCR.Location = new System.Drawing.Point(406, 148);
+            this.grpbOCR.Location = new System.Drawing.Point(406, 146);
             this.grpbOCR.Name = "grpbOCR";
             this.grpbOCR.Size = new System.Drawing.Size(212, 86);
             this.grpbOCR.TabIndex = 13;
@@ -613,7 +629,7 @@
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel4,
             this.toolStripStatusLabel3});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 355);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 377);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(630, 22);
@@ -654,7 +670,7 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.btnWinOcrRecognize);
             this.groupBox1.Controls.Add(this.btnWinOcrInfo);
-            this.groupBox1.Location = new System.Drawing.Point(245, 148);
+            this.groupBox1.Location = new System.Drawing.Point(245, 146);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(145, 86);
             this.groupBox1.TabIndex = 11;
@@ -686,12 +702,26 @@
             this.tmrAutorecognize.Interval = 1000;
             this.tmrAutorecognize.Tick += new System.EventHandler(this.tmrAutorecognize_Tick);
             // 
+            // tmrAutoload
+            // 
+            this.tmrAutoload.Tick += new System.EventHandler(this.tmrAutoload_Tick);
+            // 
+            // chkRestoreAutoLoad
+            // 
+            this.chkRestoreAutoLoad.AutoSize = true;
+            this.chkRestoreAutoLoad.Location = new System.Drawing.Point(185, 110);
+            this.chkRestoreAutoLoad.Name = "chkRestoreAutoLoad";
+            this.chkRestoreAutoLoad.Size = new System.Drawing.Size(146, 17);
+            this.chkRestoreAutoLoad.TabIndex = 14;
+            this.chkRestoreAutoLoad.Text = "Restore app on auto load";
+            this.chkRestoreAutoLoad.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(630, 377);
+            this.ClientSize = new System.Drawing.Size(630, 399);
             this.Controls.Add(this.btnQuickLng1);
             this.Controls.Add(this.btnQuickLng2);
             this.Controls.Add(this.btnQuickLng3);
@@ -787,6 +817,9 @@
         private System.Windows.Forms.Button btnQuickLng3;
         private System.Windows.Forms.Button btnQuickLng2;
         private System.Windows.Forms.Button btnQuickLng1;
+        private System.Windows.Forms.CheckBox chkAutoLoad;
+        private System.Windows.Forms.Timer tmrAutoload;
+        private System.Windows.Forms.CheckBox chkRestoreAutoLoad;
     }
 }
 
