@@ -39,6 +39,7 @@
             this.btnCopy = new System.Windows.Forms.Button();
             this.cmbLanguage = new System.Windows.Forms.ComboBox();
             this.grpbSettings = new System.Windows.Forms.GroupBox();
+            this.chkRestoreAutoLoad = new System.Windows.Forms.CheckBox();
             this.chkAutoLoad = new System.Windows.Forms.CheckBox();
             this.udAutorecognize = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
@@ -70,7 +71,6 @@
             this.btnQuickLng3 = new System.Windows.Forms.Button();
             this.btnQuickLng2 = new System.Windows.Forms.Button();
             this.btnQuickLng1 = new System.Windows.Forms.Button();
-            this.btnInvoke1 = new System.Windows.Forms.Button();
             this.grpbOCR = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrStartup = new System.Windows.Forms.Timer(this.components);
@@ -84,7 +84,8 @@
             this.btnWinOcrInfo = new System.Windows.Forms.Button();
             this.tmrAutorecognize = new System.Windows.Forms.Timer(this.components);
             this.tmrAutoload = new System.Windows.Forms.Timer(this.components);
-            this.chkRestoreAutoLoad = new System.Windows.Forms.CheckBox();
+            this.chkRecycle = new System.Windows.Forms.CheckBox();
+            this.lbLastAction = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
@@ -189,6 +190,7 @@
             // grpbSettings
             // 
             this.grpbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbSettings.Controls.Add(this.chkRecycle);
             this.grpbSettings.Controls.Add(this.chkRestoreAutoLoad);
             this.grpbSettings.Controls.Add(this.chkAutoLoad);
             this.grpbSettings.Controls.Add(this.udAutorecognize);
@@ -210,6 +212,16 @@
             this.grpbSettings.TabIndex = 14;
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Program settings";
+            // 
+            // chkRestoreAutoLoad
+            // 
+            this.chkRestoreAutoLoad.AutoSize = true;
+            this.chkRestoreAutoLoad.Location = new System.Drawing.Point(185, 110);
+            this.chkRestoreAutoLoad.Name = "chkRestoreAutoLoad";
+            this.chkRestoreAutoLoad.Size = new System.Drawing.Size(146, 17);
+            this.chkRestoreAutoLoad.TabIndex = 14;
+            this.chkRestoreAutoLoad.Text = "Restore app on auto load";
+            this.chkRestoreAutoLoad.UseVisualStyleBackColor = true;
             // 
             // chkAutoLoad
             // 
@@ -315,7 +327,7 @@
             // chkShowProgress
             // 
             this.chkShowProgress.AutoSize = true;
-            this.chkShowProgress.Location = new System.Drawing.Point(271, 88);
+            this.chkShowProgress.Location = new System.Drawing.Point(242, 87);
             this.chkShowProgress.Name = "chkShowProgress";
             this.chkShowProgress.Size = new System.Drawing.Size(96, 17);
             this.chkShowProgress.TabIndex = 12;
@@ -327,12 +339,13 @@
             // chkClearCache
             // 
             this.chkClearCache.AutoSize = true;
-            this.chkClearCache.Location = new System.Drawing.Point(271, 65);
+            this.chkClearCache.Location = new System.Drawing.Point(242, 64);
             this.chkClearCache.Name = "chkClearCache";
             this.chkClearCache.Size = new System.Drawing.Size(83, 17);
             this.chkClearCache.TabIndex = 11;
             this.chkClearCache.Text = "Clear cache";
-            this.toolTip1.SetToolTip(this.chkClearCache, "Delete region snap files when program starts");
+            this.toolTip1.SetToolTip(this.chkClearCache, "Delete images from cache folder when program starts\r\nTip: Click window system men" +
+        "u to explore cache folder");
             this.chkClearCache.UseVisualStyleBackColor = true;
             // 
             // udQuality
@@ -579,17 +592,6 @@
             this.btnQuickLng1.UseVisualStyleBackColor = false;
             this.btnQuickLng1.Click += new System.EventHandler(this.btnQuickLng1_Click);
             // 
-            // btnInvoke1
-            // 
-            this.btnInvoke1.Location = new System.Drawing.Point(32, 77);
-            this.btnInvoke1.Name = "btnInvoke1";
-            this.btnInvoke1.Size = new System.Drawing.Size(55, 23);
-            this.btnInvoke1.TabIndex = 16;
-            this.btnInvoke1.Text = "invoke1";
-            this.btnInvoke1.UseVisualStyleBackColor = true;
-            this.btnInvoke1.Visible = false;
-            this.btnInvoke1.Click += new System.EventHandler(this.btnInvoke1_Click);
-            // 
             // grpbOCR
             // 
             this.grpbOCR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -706,15 +708,25 @@
             // 
             this.tmrAutoload.Tick += new System.EventHandler(this.tmrAutoload_Tick);
             // 
-            // chkRestoreAutoLoad
+            // chkRecycle
             // 
-            this.chkRestoreAutoLoad.AutoSize = true;
-            this.chkRestoreAutoLoad.Location = new System.Drawing.Point(185, 110);
-            this.chkRestoreAutoLoad.Name = "chkRestoreAutoLoad";
-            this.chkRestoreAutoLoad.Size = new System.Drawing.Size(146, 17);
-            this.chkRestoreAutoLoad.TabIndex = 14;
-            this.chkRestoreAutoLoad.Text = "Restore app on auto load";
-            this.chkRestoreAutoLoad.UseVisualStyleBackColor = true;
+            this.chkRecycle.AutoSize = true;
+            this.chkRecycle.Location = new System.Drawing.Point(331, 64);
+            this.chkRecycle.Name = "chkRecycle";
+            this.chkRecycle.Size = new System.Drawing.Size(38, 17);
+            this.chkRecycle.TabIndex = 15;
+            this.chkRecycle.Text = "🗑";
+            this.toolTip1.SetToolTip(this.chkRecycle, "Delete to Recycle Bin (slow)");
+            this.chkRecycle.UseVisualStyleBackColor = true;
+            // 
+            // lbLastAction
+            // 
+            this.lbLastAction.Location = new System.Drawing.Point(242, 44);
+            this.lbLastAction.Name = "lbLastAction";
+            this.lbLastAction.Size = new System.Drawing.Size(84, 17);
+            this.lbLastAction.TabIndex = 17;
+            this.lbLastAction.Text = "last action";
+            this.lbLastAction.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // Form1
             // 
@@ -722,6 +734,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(630, 399);
+            this.Controls.Add(this.lbLastAction);
             this.Controls.Add(this.btnQuickLng1);
             this.Controls.Add(this.btnQuickLng2);
             this.Controls.Add(this.btnQuickLng3);
@@ -736,7 +749,6 @@
             this.Controls.Add(this.btnCopy);
             this.Controls.Add(this.cmbLanguage);
             this.Controls.Add(this.grpbOCR);
-            this.Controls.Add(this.btnInvoke1);
             this.Controls.Add(this.grpbSettings);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.txtResult);
@@ -782,7 +794,6 @@
         private System.Windows.Forms.CheckBox chkClearCache;
         private System.Windows.Forms.Timer tmrCopy;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Button btnInvoke1;
         private System.Windows.Forms.CheckBox chkShowProgress;
         private System.Windows.Forms.GroupBox grpbOCR;
         private System.Windows.Forms.CheckBox chkScale;
@@ -820,6 +831,8 @@
         private System.Windows.Forms.CheckBox chkAutoLoad;
         private System.Windows.Forms.Timer tmrAutoload;
         private System.Windows.Forms.CheckBox chkRestoreAutoLoad;
+        private System.Windows.Forms.CheckBox chkRecycle;
+        private System.Windows.Forms.Label lbLastAction;
     }
 }
 

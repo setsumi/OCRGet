@@ -179,6 +179,7 @@ namespace OCRGet
             linkLabel1.LinkBehavior = LinkBehavior.HoverUnderline;
             linkLabel1.Links.Add(0, 0, apistatus);
             toolTip1.SetToolTip(linkLabel1, apistatus);
+            lbLastAction.Text = "";
 
             cmbLanguage.Items.Clear();
             foreach (var item in _lnglist)
@@ -192,6 +193,44 @@ namespace OCRGet
                 Directory.CreateDirectory(getCacheDir());
             }
 
+            InitFSwatcher();
+            LoadConfig();
+
+            if (chkClearCache.Checked)
+                ClearCache();
+
+            RegisterHotkey();
+        }
+
+        private void ClearCache()
+        {
+            string path = getCacheDir();
+            string[] wildcards = _imageExtensions.Select(item => "*" + item).ToArray();
+            var result = wildcards
+                .SelectMany(wc => Directory.EnumerateFiles(path, wc, SearchOption.AllDirectories))
+                .ToList();
+            foreach (var file in result)
+            {
+                if (File.Exists(file))
+                {
+                    if (chkRecycle.Checked)
+                    {
+                        Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file,
+                            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                            Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                    }
+                    else
+                    {
+                        FileInfo fi = new FileInfo(file);
+                        fi.IsReadOnly = false;
+                        fi.Delete();
+                    }
+                }
+            }
+        }
+
+        private void InitFSwatcher()
+        {
             _watcher = new FileSystemWatcher(getCacheDir());
             _watcher.NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.FileName |
                 NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Size;
@@ -199,29 +238,6 @@ namespace OCRGet
             _watcher.Created += WatcherOnChanged;
             _watcher.Renamed += WatcherOnRenamed;
             _watcher.IncludeSubdirectories = true;
-
-            LoadConfig();
-
-            // clear cache
-            if (chkClearCache.Checked)
-            {
-                string path = getCacheDir();
-                string[] wildcards = _imageExtensions.Select(item => "*" + item).ToArray();
-                var result = wildcards
-                    .SelectMany(wc => Directory.EnumerateFiles(path, wc, SearchOption.AllDirectories))
-                    .ToList();
-                foreach (var file in result)
-                {
-                    if (File.Exists(file))
-                    {
-                        Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file,
-                            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                            Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-                    }
-                }
-            }
-
-            RegisterHotkey();
         }
 
         private void LoadConfig()
@@ -355,6 +371,9 @@ namespace OCRGet
             v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autoloadrestoreapp", out v);
             chkRestoreAutoLoad.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "clearcacherecyclebin", out v);
+            chkRecycle.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
             //}
             //catch { }
         }
@@ -395,6 +414,7 @@ namespace OCRGet
             _inidata["general"]["nettimeout"] = p_nettimeout.ToString();
             _inidata["general"]["autoload"] = chkAutoLoad.Checked.ToString();
             _inidata["general"]["autoloadrestoreapp"] = chkRestoreAutoLoad.Checked.ToString();
+            _inidata["general"]["clearcacherecyclebin"] = chkRecycle.Checked.ToString();
 
             _config.WriteFile(_inifile, _inidata);
         }
@@ -456,13 +476,15 @@ namespace OCRGet
             switch (ocr)
             {
                 case 1:
+                    lbLastAction.Text = "ocr.space -->";
                     RecognizeOcrSpace();
                     break;
                 case 2:
+                    lbLastAction.Text = "Win OCR -->";
                     RecognizeWinOcr();
                     break;
                 default:
-                    throw new Exception("Recognize() : Unknown OCR.");
+                    throw new ArgumentException("Recognize() : Unknown OCR.");
             }
         }
 
@@ -578,14 +600,13 @@ namespace OCRGet
             }
 
         RecognizeEend:
-            form.btnInvoke1_Click(form, null);
+            form.Invoke((MethodInvoker)delegate
+            {
+                form.lbLastAction.Text = "ocr.space -->";
+                form.RecognizeFinish();
+            });
         }
 
-        private void btnInvoke1_Click(object sender, EventArgs e)
-        {
-            if (InvokeRequired)
-                BeginInvoke(new MethodInvoker(RecognizeFinish));
-        }
         private void RecognizeFinish()
         {
             if (_formn1 != null)
@@ -661,8 +682,7 @@ namespace OCRGet
                             (int)(bmp.Height * (float)nudScaleFactor.Value));
                     }
 
-                    if (chkAutoLoad.Checked)
-                        _watcher.EnableRaisingEvents = false;
+                    _watcher.EnableRaisingEvents = false;
                     // save image to file
                     p_imagepath = getCacheDir() + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff") + ".jpg";
                     Jpeg.Save(bmpResult, p_imagepath, (long)udQuality.Value);
@@ -686,6 +706,7 @@ namespace OCRGet
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            _watcher.EnableRaisingEvents = false;
             UnregisterHotkey();
             SaveConfig();
         }
@@ -747,14 +768,13 @@ namespace OCRGet
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
             {
-                FileInfo fileInfo = new FileInfo(file);
-                if (fileInfo.Extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                    fileInfo.Extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+                var extension = Path.GetExtension(file).ToLower();
+                if (File.Exists(file) && !string.IsNullOrEmpty(extension) && _imageExtensions.Any(ext => ext == extension))
                 {
                     OpenFile(file);
                     return;
                 }
-                UiStatusMessage("Not a JPEG file", StatusMessageType.SM_Error);
+                UiStatusMessage("Not an image file", StatusMessageType.SM_Error);
             }
         }
 
@@ -965,8 +985,7 @@ namespace OCRGet
             if (string.IsNullOrEmpty(p_imagepath)) return;
             if (!File.Exists(p_imagepath)) return;
 
-            if (chkAutoLoad.Checked)
-                _watcher.EnableRaisingEvents = false;
+            _watcher.EnableRaisingEvents = false;
             // free the file
             pictureBox1.Image.Dispose();
             File.SetLastWriteTime(p_imagepath, DateTime.Now);
@@ -1009,7 +1028,7 @@ namespace OCRGet
 
             IntPtr hSysMenu = GetSystemMenu(this.Handle, false);
             AppendMenu(hSysMenu, MF_SEPARATOR, 0, string.Empty);
-            AppendMenu(hSysMenu, MF_STRING, SYSMENU_OPEN_ID, "&Open cache folder");
+            AppendMenu(hSysMenu, MF_STRING, SYSMENU_OPEN_ID, "&Explore cache folder...");
         }
 
         private void chkAutoLoad_CheckedChanged(object sender, EventArgs e)
