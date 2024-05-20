@@ -169,6 +169,7 @@ namespace OCRGet
         private FileSystemWatcher _watcher;
         private string _autoloadFile = "";
         private string[] _imageExtensions = { ".jpg", ".jpeg", ".png" };
+        private Point _imageScroll = new Point(0, 0);
 
         public Form1()
         {
@@ -374,6 +375,9 @@ namespace OCRGet
             v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "clearcacherecyclebin", out v);
             chkRecycle.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "zoomimage", out v);
+            chkZoom.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "True" : v);
             //}
             //catch { }
         }
@@ -415,6 +419,7 @@ namespace OCRGet
             _inidata["general"]["autoload"] = chkAutoLoad.Checked.ToString();
             _inidata["general"]["autoloadrestoreapp"] = chkRestoreAutoLoad.Checked.ToString();
             _inidata["general"]["clearcacherecyclebin"] = chkRecycle.Checked.ToString();
+            _inidata["general"]["zoomimage"] = chkZoom.Checked.ToString();
 
             _config.WriteFile(_inifile, _inidata);
         }
@@ -422,6 +427,12 @@ namespace OCRGet
         private void OpenFile(string file)
         {
             p_imagepath = file;
+
+            // reset image scroll
+            _imageScroll.X = 0;
+            _imageScroll.Y = 0;
+            panel1.ForceScroll(0, 0);
+
             pictureBox1.Image?.Dispose();
             pictureBox1.Image = Image.FromFile(p_imagepath);
             FileInfo fileInfo = new FileInfo(p_imagepath);
@@ -1090,8 +1101,24 @@ namespace OCRGet
 
         private void chkZoom_CheckedChanged(object sender, EventArgs e)
         {
-            pictureBox1.SizeMode = chkZoom.Checked ?
-                PictureBoxSizeMode.Zoom : PictureBoxSizeMode.CenterImage;
+            if (chkZoom.Checked)
+            {
+                _imageScroll.Y = panel1.VerticalScroll.Value;
+                _imageScroll.X = panel1.HorizontalScroll.Value;
+                panel1.ForceScroll(0, 0);
+                pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                pictureBox1.Width = panel1.ClientSize.Width;
+                pictureBox1.Height = panel1.ClientSize.Height;
+                pictureBox1.Anchor |= AnchorStyles.Right;
+                pictureBox1.Anchor |= AnchorStyles.Bottom;
+            }
+            else
+            {
+                pictureBox1.Anchor ^= AnchorStyles.Right;
+                pictureBox1.Anchor ^= AnchorStyles.Bottom;
+                pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
+                panel1.ForceScroll(_imageScroll.Y, _imageScroll.X);
+            }
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -1099,4 +1126,16 @@ namespace OCRGet
             chkZoom.Checked = pictureBox1.SizeMode != PictureBoxSizeMode.Zoom;
         }
     } // Form1
+
+    internal static class FormHelpers
+    {
+        // Panel extension method
+        public static void ForceScroll(this Panel panel, int v, int h)
+        {
+            panel.VerticalScroll.Value = v;
+            panel.VerticalScroll.Value = v;
+            panel.HorizontalScroll.Value = h;
+            panel.HorizontalScroll.Value = h;
+        }
+    }
 }

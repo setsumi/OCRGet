@@ -33,7 +33,6 @@
             this.btnOpen = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.TextBox();
             this.btnRecognize = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnRegion = new System.Windows.Forms.Button();
             this.tmrSnap = new System.Windows.Forms.Timer(this.components);
             this.btnCopy = new System.Windows.Forms.Button();
@@ -72,6 +71,7 @@
             this.btnQuickLng3 = new System.Windows.Forms.Button();
             this.btnQuickLng2 = new System.Windows.Forms.Button();
             this.btnQuickLng1 = new System.Windows.Forms.Button();
+            this.chkZoom = new System.Windows.Forms.CheckBox();
             this.grpbOCR = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrStartup = new System.Windows.Forms.Timer(this.components);
@@ -86,8 +86,8 @@
             this.tmrAutorecognize = new System.Windows.Forms.Timer(this.components);
             this.tmrAutoload = new System.Windows.Forms.Timer(this.components);
             this.lbLastAction = new System.Windows.Forms.Label();
-            this.chkZoom = new System.Windows.Forms.CheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudScaleFactor)).BeginInit();
@@ -96,6 +96,8 @@
             this.grpbOCR.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOpen
@@ -132,19 +134,6 @@
             this.toolTip1.SetToolTip(this.btnRecognize, "(Ctrl+R)");
             this.btnRecognize.UseVisualStyleBackColor = true;
             this.btnRecognize.Click += new System.EventHandler(this.btnRecognize_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 41);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(224, 329);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // btnRegion
             // 
@@ -605,6 +594,18 @@
             this.btnQuickLng1.UseVisualStyleBackColor = false;
             this.btnQuickLng1.Click += new System.EventHandler(this.btnQuickLng1_Click);
             // 
+            // chkZoom
+            // 
+            this.chkZoom.AutoSize = true;
+            this.chkZoom.Location = new System.Drawing.Point(245, 113);
+            this.chkZoom.Name = "chkZoom";
+            this.chkZoom.Size = new System.Drawing.Size(53, 17);
+            this.chkZoom.TabIndex = 18;
+            this.chkZoom.Text = "Zoom";
+            this.toolTip1.SetToolTip(this.chkZoom, "Fit image in box.\r\nTip: Can also click the picture box.");
+            this.chkZoom.UseVisualStyleBackColor = true;
+            this.chkZoom.CheckedChanged += new System.EventHandler(this.chkZoom_CheckedChanged);
+            // 
             // grpbOCR
             // 
             this.grpbOCR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -731,17 +732,28 @@
             this.lbLastAction.Text = "last action";
             this.lbLastAction.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // chkZoom
+            // panel1
             // 
-            this.chkZoom.AutoSize = true;
-            this.chkZoom.Location = new System.Drawing.Point(245, 113);
-            this.chkZoom.Name = "chkZoom";
-            this.chkZoom.Size = new System.Drawing.Size(53, 17);
-            this.chkZoom.TabIndex = 18;
-            this.chkZoom.Text = "Zoom";
-            this.toolTip1.SetToolTip(this.chkZoom, "Fit image in box.\r\nTip: Can also click the picture box.");
-            this.chkZoom.UseVisualStyleBackColor = true;
-            this.chkZoom.CheckedChanged += new System.EventHandler(this.chkZoom_CheckedChanged);
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.AutoScroll = true;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Location = new System.Drawing.Point(12, 41);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(227, 329);
+            this.panel1.TabIndex = 19;
+            this.panel1.Click += new System.EventHandler(this.pictureBox1_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(174, 182);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // Form1
             // 
@@ -749,6 +761,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(630, 399);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.chkZoom);
             this.Controls.Add(this.lbLastAction);
             this.Controls.Add(this.btnQuickLng1);
@@ -766,7 +779,6 @@
             this.Controls.Add(this.cmbLanguage);
             this.Controls.Add(this.grpbOCR);
             this.Controls.Add(this.grpbSettings);
-            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.txtResult);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
@@ -774,7 +786,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.grpbSettings.ResumeLayout(false);
             this.grpbSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).EndInit();
@@ -786,6 +797,9 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -796,7 +810,6 @@
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.Button btnRecognize;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btnRegion;
         private System.Windows.Forms.Timer tmrSnap;
         private System.Windows.Forms.Button btnCopy;
@@ -850,6 +863,8 @@
         private System.Windows.Forms.CheckBox chkRecycle;
         private System.Windows.Forms.Label lbLastAction;
         private System.Windows.Forms.CheckBox chkZoom;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 
