@@ -39,6 +39,7 @@
             this.btnCopy = new System.Windows.Forms.Button();
             this.cmbLanguage = new System.Windows.Forms.ComboBox();
             this.grpbSettings = new System.Windows.Forms.GroupBox();
+            this.chkRecycle = new System.Windows.Forms.CheckBox();
             this.chkRestoreAutoLoad = new System.Windows.Forms.CheckBox();
             this.chkAutoLoad = new System.Windows.Forms.CheckBox();
             this.udAutorecognize = new System.Windows.Forms.NumericUpDown();
@@ -84,8 +85,8 @@
             this.btnWinOcrInfo = new System.Windows.Forms.Button();
             this.tmrAutorecognize = new System.Windows.Forms.Timer(this.components);
             this.tmrAutoload = new System.Windows.Forms.Timer(this.components);
-            this.chkRecycle = new System.Windows.Forms.CheckBox();
             this.lbLastAction = new System.Windows.Forms.Label();
+            this.chkZoom = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
@@ -140,9 +141,10 @@
             this.pictureBox1.Location = new System.Drawing.Point(12, 41);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(224, 329);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // btnRegion
             // 
@@ -212,6 +214,17 @@
             this.grpbSettings.TabIndex = 14;
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Program settings";
+            // 
+            // chkRecycle
+            // 
+            this.chkRecycle.AutoSize = true;
+            this.chkRecycle.Location = new System.Drawing.Point(331, 64);
+            this.chkRecycle.Name = "chkRecycle";
+            this.chkRecycle.Size = new System.Drawing.Size(38, 17);
+            this.chkRecycle.TabIndex = 15;
+            this.chkRecycle.Text = "🗑";
+            this.toolTip1.SetToolTip(this.chkRecycle, "Delete to Recycle Bin (slow)");
+            this.chkRecycle.UseVisualStyleBackColor = true;
             // 
             // chkRestoreAutoLoad
             // 
@@ -708,19 +721,9 @@
             // 
             this.tmrAutoload.Tick += new System.EventHandler(this.tmrAutoload_Tick);
             // 
-            // chkRecycle
-            // 
-            this.chkRecycle.AutoSize = true;
-            this.chkRecycle.Location = new System.Drawing.Point(331, 64);
-            this.chkRecycle.Name = "chkRecycle";
-            this.chkRecycle.Size = new System.Drawing.Size(38, 17);
-            this.chkRecycle.TabIndex = 15;
-            this.chkRecycle.Text = "🗑";
-            this.toolTip1.SetToolTip(this.chkRecycle, "Delete to Recycle Bin (slow)");
-            this.chkRecycle.UseVisualStyleBackColor = true;
-            // 
             // lbLastAction
             // 
+            this.lbLastAction.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.lbLastAction.Location = new System.Drawing.Point(242, 44);
             this.lbLastAction.Name = "lbLastAction";
             this.lbLastAction.Size = new System.Drawing.Size(84, 17);
@@ -728,12 +731,25 @@
             this.lbLastAction.Text = "last action";
             this.lbLastAction.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // chkZoom
+            // 
+            this.chkZoom.AutoSize = true;
+            this.chkZoom.Location = new System.Drawing.Point(245, 113);
+            this.chkZoom.Name = "chkZoom";
+            this.chkZoom.Size = new System.Drawing.Size(53, 17);
+            this.chkZoom.TabIndex = 18;
+            this.chkZoom.Text = "Zoom";
+            this.toolTip1.SetToolTip(this.chkZoom, "Fit image in box.\r\nTip: Can also click the picture box.");
+            this.chkZoom.UseVisualStyleBackColor = true;
+            this.chkZoom.CheckedChanged += new System.EventHandler(this.chkZoom_CheckedChanged);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(630, 399);
+            this.Controls.Add(this.chkZoom);
             this.Controls.Add(this.lbLastAction);
             this.Controls.Add(this.btnQuickLng1);
             this.Controls.Add(this.btnQuickLng2);
@@ -833,6 +849,7 @@
         private System.Windows.Forms.CheckBox chkRestoreAutoLoad;
         private System.Windows.Forms.CheckBox chkRecycle;
         private System.Windows.Forms.Label lbLastAction;
+        private System.Windows.Forms.CheckBox chkZoom;
     }
 }
 

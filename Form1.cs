@@ -451,11 +451,11 @@ namespace OCRGet
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            OpenFileDialog fileDlg = new OpenFileDialog();
-            fileDlg.Filter = "Images(.jpg;.jpeg;.png)|*.jpg;*.jpeg;*.png";
-            if (fileDlg.ShowDialog() == DialogResult.OK)
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Images (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png|All files (*.*)|*.*";
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
-                OpenFile(fileDlg.FileName);
+                OpenFile(dlg.FileName);
             }
         }
 
@@ -1086,6 +1086,17 @@ namespace OCRGet
                     this.Activate();
                 }
             }
+        }
+
+        private void chkZoom_CheckedChanged(object sender, EventArgs e)
+        {
+            pictureBox1.SizeMode = chkZoom.Checked ?
+                PictureBoxSizeMode.Zoom : PictureBoxSizeMode.CenterImage;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            chkZoom.Checked = pictureBox1.SizeMode != PictureBoxSizeMode.Zoom;
         }
     } // Form1
 }
