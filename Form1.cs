@@ -1107,15 +1107,13 @@ namespace OCRGet
                 _imageScroll.X = panel1.HorizontalScroll.Value;
                 panel1.ForceScroll(0, 0);
                 pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-                pictureBox1.Width = panel1.ClientSize.Width;
-                pictureBox1.Height = panel1.ClientSize.Height;
-                pictureBox1.Anchor |= AnchorStyles.Right;
-                pictureBox1.Anchor |= AnchorStyles.Bottom;
+                pictureBox1.Width = panel1.Size.Width - 2;
+                pictureBox1.Height = panel1.Size.Height - 2;
+                pictureBox1.Anchor |= AnchorStyles.Right | AnchorStyles.Bottom;
             }
             else
             {
-                pictureBox1.Anchor ^= AnchorStyles.Right;
-                pictureBox1.Anchor ^= AnchorStyles.Bottom;
+                pictureBox1.Anchor ^= AnchorStyles.Right | AnchorStyles.Bottom;
                 pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
                 panel1.ForceScroll(_imageScroll.Y, _imageScroll.X);
             }
