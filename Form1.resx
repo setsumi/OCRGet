@@ -173,6 +173,20 @@ result is always returned line by line. This switch is recommended
 for table OCR, receipt OCR, invoice processing and all other type of
 input documents that have a table like structure.</value>
   </data>
+  <data name="lbMarkerSnap.ToolTip" xml:space="preserve">
+    <value>Current image is Snapped.
+
+Tip1: Set/adjust scale live.
+Tip2: Images manually opened from cache folder are treated as snapped,
+otherwise external. Therefore it is better to not mix them in the same folder.</value>
+  </data>
+  <data name="lbMarkerExtern.ToolTip" xml:space="preserve">
+    <value>Current image is External.
+
+Tip1: Set/adjust scale live.
+Tip2: Images manually opened from cache folder are treated as snapped,
+otherwise external. Therefore it is better to not mix them in the same folder.</value>
+  </data>
   <metadata name="tmrStartup.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>296, 16</value>
   </metadata>

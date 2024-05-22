@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 
 namespace OCRGet
 {
@@ -33,8 +30,7 @@ namespace OCRGet
 
             // Create an Encoder object based on the GUID  
             // for the Quality parameter category.  
-            System.Drawing.Imaging.Encoder myEncoder =
-                System.Drawing.Imaging.Encoder.Quality;
+            Encoder myEncoder = Encoder.Quality;
 
             // Create an EncoderParameters object.  
             // An EncoderParameters object has an array of EncoderParameter  
@@ -45,6 +41,16 @@ namespace OCRGet
             EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, quality);
             myEncoderParameters.Param[0] = myEncoderParameter;
             bmp.Save(path, jpgEncoder, myEncoderParameters);
+        }
+
+        public static void Save(Bitmap bmp, MemoryStream stream, long quality)
+        {
+            ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+            Encoder myEncoder = Encoder.Quality;
+            EncoderParameters myEncoderParameters = new EncoderParameters(1);
+            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, quality);
+            myEncoderParameters.Param[0] = myEncoderParameter;
+            bmp.Save(stream, jpgEncoder, myEncoderParameters);
         }
     } // Jpeg
 
@@ -62,7 +68,6 @@ namespace OCRGet
             Bitmap bmpResult = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             bmpResult.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
 
-            using (bmp)
             using (Graphics g = Graphics.FromImage(bmpResult))
             {
                 g.InterpolationMode = interpolationMode;

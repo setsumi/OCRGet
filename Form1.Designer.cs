@@ -38,6 +38,9 @@
             this.btnCopy = new System.Windows.Forms.Button();
             this.cmbLanguage = new System.Windows.Forms.ComboBox();
             this.grpbSettings = new System.Windows.Forms.GroupBox();
+            this.btnLoadFromFolder = new System.Windows.Forms.Button();
+            this.nudScaleExtern = new System.Windows.Forms.NumericUpDown();
+            this.chkScaleExtern = new System.Windows.Forms.CheckBox();
             this.chkRecycle = new System.Windows.Forms.CheckBox();
             this.chkRestoreAutoLoad = new System.Windows.Forms.CheckBox();
             this.chkAutoLoad = new System.Windows.Forms.CheckBox();
@@ -72,6 +75,9 @@
             this.btnQuickLng2 = new System.Windows.Forms.Button();
             this.btnQuickLng1 = new System.Windows.Forms.Button();
             this.chkZoom = new System.Windows.Forms.CheckBox();
+            this.chkProcessed = new System.Windows.Forms.CheckBox();
+            this.lbMarkerSnap = new System.Windows.Forms.Label();
+            this.lbMarkerExtern = new System.Windows.Forms.Label();
             this.grpbOCR = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrStartup = new System.Windows.Forms.Timer(this.components);
@@ -89,6 +95,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.grpbSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudScaleExtern)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudScaleFactor)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).BeginInit();
@@ -126,12 +133,12 @@
             // 
             // btnRecognize
             // 
-            this.btnRecognize.Location = new System.Drawing.Point(245, 73);
+            this.btnRecognize.Location = new System.Drawing.Point(245, 60);
             this.btnRecognize.Name = "btnRecognize";
             this.btnRecognize.Size = new System.Drawing.Size(75, 30);
             this.btnRecognize.TabIndex = 3;
             this.btnRecognize.Text = "&Recognize";
-            this.toolTip1.SetToolTip(this.btnRecognize, "(Ctrl+R)");
+            this.toolTip1.SetToolTip(this.btnRecognize, "by selected OCR (Ctrl+R)");
             this.btnRecognize.UseVisualStyleBackColor = true;
             this.btnRecognize.Click += new System.EventHandler(this.btnRecognize_Click);
             // 
@@ -181,6 +188,9 @@
             // grpbSettings
             // 
             this.grpbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbSettings.Controls.Add(this.btnLoadFromFolder);
+            this.grpbSettings.Controls.Add(this.nudScaleExtern);
+            this.grpbSettings.Controls.Add(this.chkScaleExtern);
             this.grpbSettings.Controls.Add(this.chkRecycle);
             this.grpbSettings.Controls.Add(this.chkRestoreAutoLoad);
             this.grpbSettings.Controls.Add(this.chkAutoLoad);
@@ -199,18 +209,69 @@
             this.grpbSettings.Controls.Add(this.chkAutocopy);
             this.grpbSettings.Location = new System.Drawing.Point(245, 234);
             this.grpbSettings.Name = "grpbSettings";
-            this.grpbSettings.Size = new System.Drawing.Size(373, 136);
+            this.grpbSettings.Size = new System.Drawing.Size(373, 156);
             this.grpbSettings.TabIndex = 14;
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Program settings";
             // 
+            // btnLoadFromFolder
+            // 
+            this.btnLoadFromFolder.Location = new System.Drawing.Point(171, 107);
+            this.btnLoadFromFolder.Name = "btnLoadFromFolder";
+            this.btnLoadFromFolder.Size = new System.Drawing.Size(31, 23);
+            this.btnLoadFromFolder.TabIndex = 8;
+            this.btnLoadFromFolder.Text = "...";
+            this.btnLoadFromFolder.UseVisualStyleBackColor = true;
+            this.btnLoadFromFolder.Click += new System.EventHandler(this.btnLoadFromFolder_Click);
+            // 
+            // nudScaleExtern
+            // 
+            this.nudScaleExtern.DecimalPlaces = 2;
+            this.nudScaleExtern.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.nudScaleExtern.Location = new System.Drawing.Point(320, 40);
+            this.nudScaleExtern.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudScaleExtern.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudScaleExtern.Name = "nudScaleExtern";
+            this.nudScaleExtern.Size = new System.Drawing.Size(44, 20);
+            this.nudScaleExtern.TabIndex = 13;
+            this.nudScaleExtern.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudScaleExtern.ValueChanged += new System.EventHandler(this.nudScaleFactor_ValueChanged);
+            // 
+            // chkScaleExtern
+            // 
+            this.chkScaleExtern.AutoSize = true;
+            this.chkScaleExtern.Location = new System.Drawing.Point(231, 42);
+            this.chkScaleExtern.Name = "chkScaleExtern";
+            this.chkScaleExtern.Size = new System.Drawing.Size(85, 17);
+            this.chkScaleExtern.TabIndex = 12;
+            this.chkScaleExtern.Text = "Scale extern";
+            this.toolTip1.SetToolTip(this.chkScaleExtern, "Scale external image, which improves OCR results");
+            this.chkScaleExtern.UseVisualStyleBackColor = true;
+            this.chkScaleExtern.CheckedChanged += new System.EventHandler(this.nudScaleFactor_ValueChanged);
+            // 
             // chkRecycle
             // 
             this.chkRecycle.AutoSize = true;
-            this.chkRecycle.Location = new System.Drawing.Point(331, 64);
+            this.chkRecycle.Location = new System.Drawing.Point(331, 87);
             this.chkRecycle.Name = "chkRecycle";
             this.chkRecycle.Size = new System.Drawing.Size(38, 17);
-            this.chkRecycle.TabIndex = 15;
+            this.chkRecycle.TabIndex = 17;
             this.chkRecycle.Text = "🗑";
             this.toolTip1.SetToolTip(this.chkRecycle, "Delete to Recycle Bin (slow)");
             this.chkRecycle.UseVisualStyleBackColor = true;
@@ -218,10 +279,10 @@
             // chkRestoreAutoLoad
             // 
             this.chkRestoreAutoLoad.AutoSize = true;
-            this.chkRestoreAutoLoad.Location = new System.Drawing.Point(185, 110);
+            this.chkRestoreAutoLoad.Location = new System.Drawing.Point(6, 133);
             this.chkRestoreAutoLoad.Name = "chkRestoreAutoLoad";
             this.chkRestoreAutoLoad.Size = new System.Drawing.Size(146, 17);
-            this.chkRestoreAutoLoad.TabIndex = 14;
+            this.chkRestoreAutoLoad.TabIndex = 9;
             this.chkRestoreAutoLoad.Text = "Restore app on auto load";
             this.chkRestoreAutoLoad.UseVisualStyleBackColor = true;
             // 
@@ -230,10 +291,10 @@
             this.chkAutoLoad.AutoSize = true;
             this.chkAutoLoad.Location = new System.Drawing.Point(6, 110);
             this.chkAutoLoad.Name = "chkAutoLoad";
-            this.chkAutoLoad.Size = new System.Drawing.Size(163, 17);
-            this.chkAutoLoad.TabIndex = 13;
-            this.chkAutoLoad.Text = "Auto load images from cache";
-            this.toolTip1.SetToolTip(this.chkAutoLoad, "Load file placed into cache folder by another application");
+            this.chkAutoLoad.Size = new System.Drawing.Size(159, 17);
+            this.chkAutoLoad.TabIndex = 7;
+            this.chkAutoLoad.Text = "Auto load images from folder";
+            this.toolTip1.SetToolTip(this.chkAutoLoad, "Load images from external application");
             this.chkAutoLoad.UseVisualStyleBackColor = true;
             this.chkAutoLoad.CheckedChanged += new System.EventHandler(this.chkAutoLoad_CheckedChanged);
             // 
@@ -267,15 +328,15 @@
             // 
             // nudScaleFactor
             // 
-            this.nudScaleFactor.DecimalPlaces = 1;
+            this.nudScaleFactor.DecimalPlaces = 2;
             this.nudScaleFactor.Increment = new decimal(new int[] {
             5,
             0,
             0,
-            65536});
+            131072});
             this.nudScaleFactor.Location = new System.Drawing.Point(320, 17);
             this.nudScaleFactor.Maximum = new decimal(new int[] {
-            4,
+            5,
             0,
             0,
             0});
@@ -283,26 +344,28 @@
             1,
             0,
             0,
-            0});
+            65536});
             this.nudScaleFactor.Name = "nudScaleFactor";
             this.nudScaleFactor.Size = new System.Drawing.Size(44, 20);
-            this.nudScaleFactor.TabIndex = 8;
+            this.nudScaleFactor.TabIndex = 11;
             this.nudScaleFactor.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
+            this.nudScaleFactor.ValueChanged += new System.EventHandler(this.nudScaleFactor_ValueChanged);
             // 
             // chkScaleFactor
             // 
             this.chkScaleFactor.AutoSize = true;
             this.chkScaleFactor.Location = new System.Drawing.Point(231, 19);
             this.chkScaleFactor.Name = "chkScaleFactor";
-            this.chkScaleFactor.Size = new System.Drawing.Size(83, 17);
-            this.chkScaleFactor.TabIndex = 7;
-            this.chkScaleFactor.Text = "Scale factor";
+            this.chkScaleFactor.Size = new System.Drawing.Size(79, 17);
+            this.chkScaleFactor.TabIndex = 10;
+            this.chkScaleFactor.Text = "Scale snap";
             this.toolTip1.SetToolTip(this.chkScaleFactor, "Scale snapped image, which improves OCR results");
             this.chkScaleFactor.UseVisualStyleBackColor = true;
+            this.chkScaleFactor.CheckedChanged += new System.EventHandler(this.nudScaleFactor_ValueChanged);
             // 
             // chkRemoveSpaces
             // 
@@ -329,10 +392,10 @@
             // chkShowProgress
             // 
             this.chkShowProgress.AutoSize = true;
-            this.chkShowProgress.Location = new System.Drawing.Point(242, 87);
+            this.chkShowProgress.Location = new System.Drawing.Point(242, 110);
             this.chkShowProgress.Name = "chkShowProgress";
             this.chkShowProgress.Size = new System.Drawing.Size(96, 17);
-            this.chkShowProgress.TabIndex = 12;
+            this.chkShowProgress.TabIndex = 18;
             this.chkShowProgress.Text = "Show progress";
             this.toolTip1.SetToolTip(this.chkShowProgress, "Show pop-up indicator while web request is in progress.\r\nNote: Deactivates \"Resto" +
         "re app after region snap\" option.");
@@ -341,22 +404,23 @@
             // chkClearCache
             // 
             this.chkClearCache.AutoSize = true;
-            this.chkClearCache.Location = new System.Drawing.Point(242, 64);
+            this.chkClearCache.Location = new System.Drawing.Point(242, 87);
             this.chkClearCache.Name = "chkClearCache";
             this.chkClearCache.Size = new System.Drawing.Size(83, 17);
-            this.chkClearCache.TabIndex = 11;
+            this.chkClearCache.TabIndex = 16;
             this.chkClearCache.Text = "Clear cache";
-            this.toolTip1.SetToolTip(this.chkClearCache, "Delete images from cache folder when program starts\r\nTip: Click window system men" +
-        "u to explore cache folder");
+            this.toolTip1.SetToolTip(this.chkClearCache, "Delete images from cache folder when program starts.\r\nTip: Click window system me" +
+        "nu to explore cache folder.");
             this.chkClearCache.UseVisualStyleBackColor = true;
             // 
             // udQuality
             // 
             this.udQuality.BackColor = System.Drawing.SystemColors.Window;
-            this.udQuality.Location = new System.Drawing.Point(320, 40);
+            this.udQuality.Location = new System.Drawing.Point(320, 63);
             this.udQuality.Name = "udQuality";
             this.udQuality.Size = new System.Drawing.Size(44, 20);
-            this.udQuality.TabIndex = 10;
+            this.udQuality.TabIndex = 15;
+            this.toolTip1.SetToolTip(this.udQuality, "Quality of generated JPEG images");
             this.udQuality.Value = new decimal(new int[] {
             90,
             0,
@@ -366,12 +430,12 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(244, 42);
+            this.label1.Location = new System.Drawing.Point(244, 65);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 9;
+            this.label1.TabIndex = 14;
             this.label1.Text = "JPEG quality";
-            this.toolTip1.SetToolTip(this.label1, "Quality of snapped images saved to cache");
+            this.toolTip1.SetToolTip(this.label1, "Quality of generated JPEG images");
             // 
             // chkRestore
             // 
@@ -519,7 +583,7 @@
             this.rdbOCR1.TabIndex = 12;
             this.rdbOCR1.TabStop = true;
             this.rdbOCR1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.rdbOCR1, "Activate");
+            this.toolTip1.SetToolTip(this.rdbOCR1, "Select");
             this.rdbOCR1.UseVisualStyleBackColor = true;
             // 
             // rdbOCR2
@@ -535,7 +599,7 @@
             this.rdbOCR2.TabIndex = 10;
             this.rdbOCR2.TabStop = true;
             this.rdbOCR2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.rdbOCR2, "Activate");
+            this.toolTip1.SetToolTip(this.rdbOCR2, "Select");
             this.rdbOCR2.UseVisualStyleBackColor = true;
             // 
             // btnRewrite
@@ -544,8 +608,9 @@
             this.btnRewrite.Name = "btnRewrite";
             this.btnRewrite.Size = new System.Drawing.Size(75, 23);
             this.btnRewrite.TabIndex = 2;
-            this.btnRewrite.Text = "Re&write";
-            this.toolTip1.SetToolTip(this.btnRewrite, "Write image file again to update (Ctrl+W)");
+            this.btnRewrite.Text = "&Write";
+            this.toolTip1.SetToolTip(this.btnRewrite, "Write processed image file (Ctrl+W)\r\nNote: Intended for use with external softwar" +
+        "e.");
             this.btnRewrite.UseVisualStyleBackColor = true;
             this.btnRewrite.Click += new System.EventHandler(this.btnRewrite_Click);
             // 
@@ -597,7 +662,7 @@
             // chkZoom
             // 
             this.chkZoom.AutoSize = true;
-            this.chkZoom.Location = new System.Drawing.Point(245, 113);
+            this.chkZoom.Location = new System.Drawing.Point(245, 96);
             this.chkZoom.Name = "chkZoom";
             this.chkZoom.Size = new System.Drawing.Size(53, 17);
             this.chkZoom.TabIndex = 18;
@@ -605,6 +670,40 @@
             this.toolTip1.SetToolTip(this.chkZoom, "Fit image in box.\r\nTip: Can also click the picture box.");
             this.chkZoom.UseVisualStyleBackColor = true;
             this.chkZoom.CheckedChanged += new System.EventHandler(this.chkZoom_CheckedChanged);
+            // 
+            // chkProcessed
+            // 
+            this.chkProcessed.AutoSize = true;
+            this.chkProcessed.Location = new System.Drawing.Point(245, 119);
+            this.chkProcessed.Name = "chkProcessed";
+            this.chkProcessed.Size = new System.Drawing.Size(76, 17);
+            this.chkProcessed.TabIndex = 19;
+            this.chkProcessed.Text = "Processed";
+            this.toolTip1.SetToolTip(this.chkProcessed, "Show processed image sent to OCR instead of original");
+            this.chkProcessed.UseVisualStyleBackColor = true;
+            this.chkProcessed.CheckedChanged += new System.EventHandler(this.chkProcessed_CheckedChanged);
+            // 
+            // lbMarkerSnap
+            // 
+            this.lbMarkerSnap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbMarkerSnap.AutoSize = true;
+            this.lbMarkerSnap.Location = new System.Drawing.Point(614, 254);
+            this.lbMarkerSnap.Name = "lbMarkerSnap";
+            this.lbMarkerSnap.Size = new System.Drawing.Size(16, 13);
+            this.lbMarkerSnap.TabIndex = 20;
+            this.lbMarkerSnap.Text = "◀";
+            this.toolTip1.SetToolTip(this.lbMarkerSnap, resources.GetString("lbMarkerSnap.ToolTip"));
+            // 
+            // lbMarkerExtern
+            // 
+            this.lbMarkerExtern.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbMarkerExtern.AutoSize = true;
+            this.lbMarkerExtern.Location = new System.Drawing.Point(614, 277);
+            this.lbMarkerExtern.Name = "lbMarkerExtern";
+            this.lbMarkerExtern.Size = new System.Drawing.Size(16, 13);
+            this.lbMarkerExtern.TabIndex = 21;
+            this.lbMarkerExtern.Text = "◀";
+            this.toolTip1.SetToolTip(this.lbMarkerExtern, resources.GetString("lbMarkerExtern.ToolTip"));
             // 
             // grpbOCR
             // 
@@ -645,7 +744,7 @@
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel4,
             this.toolStripStatusLabel3});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 377);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 397);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(630, 22);
@@ -725,12 +824,12 @@
             // lbLastAction
             // 
             this.lbLastAction.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lbLastAction.Location = new System.Drawing.Point(242, 44);
+            this.lbLastAction.Location = new System.Drawing.Point(242, 42);
             this.lbLastAction.Name = "lbLastAction";
-            this.lbLastAction.Size = new System.Drawing.Size(84, 17);
+            this.lbLastAction.Size = new System.Drawing.Size(84, 15);
             this.lbLastAction.TabIndex = 17;
             this.lbLastAction.Text = "last action";
-            this.lbLastAction.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lbLastAction.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panel1
             // 
@@ -741,8 +840,8 @@
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Location = new System.Drawing.Point(12, 41);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(227, 329);
-            this.panel1.TabIndex = 19;
+            this.panel1.Size = new System.Drawing.Size(227, 349);
+            this.panel1.TabIndex = 16;
             this.panel1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // pictureBox1
@@ -760,7 +859,10 @@
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(630, 399);
+            this.ClientSize = new System.Drawing.Size(630, 419);
+            this.Controls.Add(this.lbMarkerExtern);
+            this.Controls.Add(this.lbMarkerSnap);
+            this.Controls.Add(this.chkProcessed);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.chkZoom);
             this.Controls.Add(this.lbLastAction);
@@ -788,6 +890,7 @@
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.grpbSettings.ResumeLayout(false);
             this.grpbSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudScaleExtern)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudScaleFactor)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).EndInit();
@@ -865,6 +968,12 @@
         private System.Windows.Forms.CheckBox chkZoom;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.CheckBox chkProcessed;
+        private System.Windows.Forms.NumericUpDown nudScaleExtern;
+        private System.Windows.Forms.CheckBox chkScaleExtern;
+        private System.Windows.Forms.Button btnLoadFromFolder;
+        private System.Windows.Forms.Label lbMarkerSnap;
+        private System.Windows.Forms.Label lbMarkerExtern;
     }
 }
 

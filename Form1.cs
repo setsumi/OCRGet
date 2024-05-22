@@ -18,6 +18,7 @@ using Windows.Globalization;
 using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace OCRGet
 {
@@ -39,6 +40,8 @@ namespace OCRGet
 
         // ID for the Open item on the system menu
         private const int SYSMENU_OPEN_ID = 0x1;
+
+        enum ImageType { Snapped, External, Dontknow }
 
         struct Credential
         {
@@ -168,8 +171,12 @@ namespace OCRGet
         private int _hotkeyID = 0;
         private FileSystemWatcher _watcher;
         private string _autoloadFile = "";
+        private string _autoloadFolder = "";
         private string[] _imageExtensions = { ".jpg", ".jpeg", ".png" };
         private Point _imageScroll = new Point(0, 0);
+        private MemoryImage _imgOriginal = new MemoryImage();
+        private MemoryImage _imgProcessed = new MemoryImage();
+        private bool _isBooting = true;
 
         public Form1()
         {
@@ -181,6 +188,12 @@ namespace OCRGet
             linkLabel1.Links.Add(0, 0, apistatus);
             toolTip1.SetToolTip(linkLabel1, apistatus);
             lbLastAction.Text = "";
+            lbMarkerSnap.Visible = false;
+            lbMarkerExtern.Visible = false;
+            nudScaleFactor.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
+            nudScaleExtern.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
+            udQuality.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
+            udAutorecognize.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
 
             cmbLanguage.Items.Clear();
             foreach (var item in _lnglist)
@@ -189,23 +202,25 @@ namespace OCRGet
             }
 
             // create cache folder
-            if (!Directory.Exists(getCacheDir()))
+            if (!Directory.Exists(GetCacheDir()))
             {
-                Directory.CreateDirectory(getCacheDir());
+                Directory.CreateDirectory(GetCacheDir());
             }
 
-            InitFSwatcher();
             LoadConfig();
 
             if (chkClearCache.Checked)
                 ClearCache();
 
             RegisterHotkey();
+            InitFSwatcher(_autoloadFolder);
+
+            _isBooting = false;
         }
 
         private void ClearCache()
         {
-            string path = getCacheDir();
+            string path = GetCacheDir();
             string[] wildcards = _imageExtensions.Select(item => "*" + item).ToArray();
             var result = wildcards
                 .SelectMany(wc => Directory.EnumerateFiles(path, wc, SearchOption.AllDirectories))
@@ -230,15 +245,17 @@ namespace OCRGet
             }
         }
 
-        private void InitFSwatcher()
+        private void InitFSwatcher(string folder)
         {
-            _watcher = new FileSystemWatcher(getCacheDir());
+            _watcher?.Dispose();
+            _watcher = new FileSystemWatcher(folder);
             _watcher.NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.FileName |
                 NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Size;
             _watcher.Changed += WatcherOnChanged;
             _watcher.Created += WatcherOnChanged;
             _watcher.Renamed += WatcherOnRenamed;
             _watcher.IncludeSubdirectories = true;
+            _watcher.EnableRaisingEvents = chkAutoLoad.Checked;
         }
 
         private void LoadConfig()
@@ -334,6 +351,12 @@ namespace OCRGet
             v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleFactor", out v);
             nudScaleFactor.Value = decimal.Parse(string.IsNullOrEmpty(v) ? "2" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleExternal", out v);
+            chkScaleExtern.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "scaleFactorExternal", out v);
+            nudScaleExtern.Value = decimal.Parse(string.IsNullOrEmpty(v) ? "2" : v);
 
             // ocr.space options
             chkDetectOrientation.Checked = bool.Parse(_inidata["general"]["detectOrientation"]);
@@ -370,6 +393,10 @@ namespace OCRGet
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autoload", out v);
             chkAutoLoad.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
             v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autoloadFolder", out v);
+            _autoloadFolder = string.IsNullOrEmpty(v) ? GetCacheDir() : v;
+            toolTip1.SetToolTip(btnLoadFromFolder, _autoloadFolder);
+            v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autoloadrestoreapp", out v);
             chkRestoreAutoLoad.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
             v = "";
@@ -378,6 +405,9 @@ namespace OCRGet
             v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "zoomimage", out v);
             chkZoom.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "True" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "processedimage", out v);
+            chkProcessed.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
             //}
             //catch { }
         }
@@ -396,6 +426,8 @@ namespace OCRGet
             _inidata["general"]["showprogress"] = chkShowProgress.Checked.ToString();
             _inidata["general"]["scaleCaptured"] = chkScaleFactor.Checked.ToString();
             _inidata["general"]["scaleFactor"] = nudScaleFactor.Value.ToString();
+            _inidata["general"]["scaleExternal"] = chkScaleExtern.Checked.ToString();
+            _inidata["general"]["scaleFactorExternal"] = nudScaleExtern.Value.ToString();
 
             _inidata["general"]["detectOrientation"] = chkDetectOrientation.Checked.ToString();
             _inidata["general"]["scale"] = chkScale.Checked.ToString();
@@ -417,25 +449,35 @@ namespace OCRGet
 
             _inidata["general"]["nettimeout"] = p_nettimeout.ToString();
             _inidata["general"]["autoload"] = chkAutoLoad.Checked.ToString();
+            _inidata["general"]["autoloadFolder"] = _autoloadFolder;
             _inidata["general"]["autoloadrestoreapp"] = chkRestoreAutoLoad.Checked.ToString();
             _inidata["general"]["clearcacherecyclebin"] = chkRecycle.Checked.ToString();
             _inidata["general"]["zoomimage"] = chkZoom.Checked.ToString();
+            _inidata["general"]["processedimage"] = chkProcessed.Checked.ToString();
 
             _config.WriteFile(_inifile, _inidata);
         }
 
-        private void OpenFile(string file)
+        private void OpenFile(string file, ImageType imagetype)
         {
             p_imagepath = file;
 
-            // reset image scroll
-            _imageScroll.X = 0;
-            _imageScroll.Y = 0;
-            panel1.ForceScroll(0, 0);
+            if (imagetype == ImageType.Dontknow)
+            {
+                var folder = Path.GetDirectoryName(file);
+                imagetype = string.Compare(folder, GetCacheDir(), true) == 0 ? ImageType.Snapped : ImageType.External;
+            }
 
-            pictureBox1.Image?.Dispose();
-            pictureBox1.Image = Image.FromFile(p_imagepath);
-            FileInfo fileInfo = new FileInfo(p_imagepath);
+            // update marker
+            bool snapped = imagetype == ImageType.Snapped;
+            lbMarkerSnap.Visible = snapped;
+            lbMarkerExtern.Visible = !snapped;
+
+            _imgOriginal.FromFile(file);
+            ProcessImage(_imgOriginal, _imgProcessed, imagetype);
+            ShowImage();
+
+            FileInfo fileInfo = new FileInfo(file);
             this.Text = "OCRGet - " + fileInfo.Name;
             p_imagesize = ((float)fileInfo.Length / 1024f / 1024f).ToString("0.00") + " MB";
             UiStatusMessage("Loaded " + p_imagesize, StatusMessageType.SM_Ok);
@@ -454,6 +496,41 @@ namespace OCRGet
                 }
             }
         }
+
+        private void ShowImage()
+        {
+            if (_imgOriginal.Bitmap == null) return;
+
+            // reset image scroll
+            _imageScroll.X = 0;
+            _imageScroll.Y = 0;
+            panel1.ForceScroll(0, 0);
+
+            pictureBox1.Image = chkProcessed.Checked ? _imgProcessed.Bitmap : _imgOriginal.Bitmap;
+        }
+
+        private void ProcessImage(MemoryImage from, MemoryImage to, ImageType imagetype)
+        {
+            var chk = imagetype == ImageType.External ? chkScaleExtern : chkScaleFactor;
+            var nud = imagetype == ImageType.External ? nudScaleExtern : nudScaleFactor;
+            if (chk.Checked && nud.Value != 1)
+            {
+                // scale image
+                using (Bitmap result = ImageHelper.ResizeImage(from.Bitmap,
+                    (int)(from.Bitmap.Width * (float)nud.Value),
+                    (int)(from.Bitmap.Height * (float)nud.Value)))
+                {
+                    var ms = new MemoryStream(); // stream is stored in MemoryImage
+                    Jpeg.Save(result, ms, 100);
+                    to.FromStream(ms);
+                }
+            }
+            else
+            {
+                to.From(from);
+            }
+        }
+
         private void tmrAutorecognize_Tick(object sender, EventArgs e)
         {
             tmrAutorecognize.Enabled = false;
@@ -466,7 +543,7 @@ namespace OCRGet
             dlg.Filter = "Images (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png|All files (*.*)|*.*";
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                OpenFile(dlg.FileName);
+                OpenFile(dlg.FileName, ImageType.Dontknow);
             }
         }
 
@@ -505,25 +582,18 @@ namespace OCRGet
             if (!OcrEngine.IsLanguageSupported(language))
             {
                 p_resulttext = $"'{language.LanguageTag}' is not supported in this system. Consult Information option.";
-                RecognizeFinish();
+                RecognizeFinish(true);
                 return;
             }
-            var stream = File.OpenRead(p_imagepath);
+            var stream = new MemoryStream(_imgProcessed.Bytes);
             var decoder = await BitmapDecoder.CreateAsync(stream.AsRandomAccessStream());
             var bitmap = await decoder.GetSoftwareBitmapAsync();
             var engine = OcrEngine.TryCreateFromLanguage(language);
             var ocrResult = await engine.RecognizeAsync(bitmap).AsTask();
             p_resulttext = ocrResult.Text;
-            stream.Close(); // free the file
-            RecognizeFinish();
-
-            //var _engine = OcrEngine.TryCreateFromLanguage(new Language("en-US"));
-            //var file = await StorageFile.GetFileFromPathAsync("");
-            //var _stream = await file.OpenAsync(FileAccessMode.Read);
-            //var _decoder = await BitmapDecoder.CreateAsync(_stream);
-            //var softwareBitmap = await _decoder.GetSoftwareBitmapAsync();
-            //var _ocrResult = await _engine.RecognizeAsync(softwareBitmap);
-            ////_ocrResult.Text;
+            bitmap.Dispose();
+            stream.Dispose();
+            RecognizeFinish(false);
         }
 
         private void RecognizeOcrSpace()
@@ -553,12 +623,9 @@ namespace OCRGet
         private static void RecognizeThread(object o)
         {
             Form1 form = (Form1)o;
+            bool error = false;
 
-            // Read file data
-            FileStream fs = new FileStream(form.p_imagepath, FileMode.Open, FileAccess.Read);
-            byte[] data = new byte[fs.Length];
-            fs.Read(data, 0, data.Length);
-            fs.Close();
+            byte[] data = form._imgProcessed.Bytes;
 
             // Generate post objects
             Dictionary<string, object> postParameters = new Dictionary<string, object>();
@@ -581,6 +648,7 @@ namespace OCRGet
             }
             catch (Exception e)
             {
+                error = true;
                 form.p_resulttext = "ERROR: " + e.Message;
                 goto RecognizeEend;
             }
@@ -602,11 +670,13 @@ namespace OCRGet
                 }
                 else
                 {
+                    error = true;
                     form.p_resulttext = "ERROR: " + fullResponse;
                 }
             }
             catch
             {
+                error = true;
                 form.p_resulttext = "ERROR: " + fullResponse;
             }
 
@@ -614,11 +684,11 @@ namespace OCRGet
             form.Invoke((MethodInvoker)delegate
             {
                 form.lbLastAction.Text = "ocr.space -->";
-                form.RecognizeFinish();
+                form.RecognizeFinish(error);
             });
         }
 
-        private void RecognizeFinish()
+        private void RecognizeFinish(bool error)
         {
             if (_formn1 != null)
             {
@@ -627,20 +697,24 @@ namespace OCRGet
                 _formn1 = null;
             }
 
-            // remove linebreaks
-            if (chkRemoveLinebreaks.Checked)
-                p_resulttext = p_resulttext.Replace("\n", "").Replace("\r", "");
-            // remove spaces
-            if (chkRemoveSpaces.Checked)
-                p_resulttext = p_resulttext.Replace(" ", "");
+            if (!error)
+            {
+                // remove linebreaks
+                if (chkRemoveLinebreaks.Checked)
+                    p_resulttext = p_resulttext.Replace("\n", "").Replace("\r", "");
+                // remove spaces
+                if (chkRemoveSpaces.Checked)
+                    p_resulttext = p_resulttext.Replace(" ", "");
+            }
 
+            txtResult.Tag = error ? "error" : null;
             txtResult.Text = p_resulttext;
             btnOpen.Enabled = true;
             btnRegion.Enabled = true;
             btnRecognize.Enabled = true;
             UiStatusMessage(p_imagesize + " Done", StatusMessageType.SM_Ok);
 
-            if (chkAutocopy.Checked)
+            if (!error && chkAutocopy.Checked)
             {
                 btnCopy_Click(this, null);
             }
@@ -681,27 +755,17 @@ namespace OCRGet
                 using (Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb))
                 using (Graphics g = Graphics.FromImage(bmp))
                 {
-                    Bitmap bmpResult = bmp;
                     // get image from screen
                     g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
-
-                    // scale image
-                    if (chkScaleFactor.Checked)
-                    {
-                        bmpResult = ImageHelper.ResizeImage(bmp,
-                            (int)(bmp.Width * (float)nudScaleFactor.Value),
-                            (int)(bmp.Height * (float)nudScaleFactor.Value));
-                    }
-
-                    _watcher.EnableRaisingEvents = false;
                     // save image to file
-                    p_imagepath = getCacheDir() + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff") + ".jpg";
-                    Jpeg.Save(bmpResult, p_imagepath, (long)udQuality.Value);
+                    _watcher.EnableRaisingEvents = false;
+                    p_imagepath = Path.Combine(GetCacheDir(), "snap" + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff") + ".jpg");
+                    Jpeg.Save(bmp, p_imagepath, (long)udQuality.Value);
                     if (chkAutoLoad.Checked)
                         _watcher.EnableRaisingEvents = true;
                 }
 
-                OpenFile(p_imagepath);
+                OpenFile(p_imagepath, ImageType.Snapped);
 
                 if (chkRestore.Checked && !chkShowProgress.Checked)
                     this.WindowState = FormWindowState.Normal;
@@ -741,9 +805,9 @@ namespace OCRGet
             return rv;
         }
 
-        private string getCacheDir()
+        private string GetCacheDir()
         {
-            return AppDomain.CurrentDomain.BaseDirectory + "cache\\";
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cache");
         }
 
         private void btnCopy_Click(object sender, EventArgs e)
@@ -782,7 +846,7 @@ namespace OCRGet
                 var extension = Path.GetExtension(file).ToLower();
                 if (File.Exists(file) && !string.IsNullOrEmpty(extension) && _imageExtensions.Any(ext => ext == extension))
                 {
-                    OpenFile(file);
+                    OpenFile(file, ImageType.Dontknow);
                     return;
                 }
                 UiStatusMessage("Not an image file", StatusMessageType.SM_Error);
@@ -894,7 +958,7 @@ namespace OCRGet
             {
                 var psi = new ProcessStartInfo
                 {
-                    FileName = getCacheDir(),
+                    FileName = GetCacheDir(),
                     UseShellExecute = true
                 };
                 Process.Start(psi);
@@ -947,6 +1011,8 @@ namespace OCRGet
 
         private void chkRemoveLinebreaks_CheckedChanged(object sender, EventArgs e)
         {
+            if ((string)txtResult.Tag == "error") return; // don't mangle error mesage
+
             string text = txtResult.Text;
             // remove linebreaks
             if (chkRemoveLinebreaks.Checked)
@@ -994,18 +1060,19 @@ namespace OCRGet
         private void btnRewrite_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(p_imagepath)) return;
-            if (!File.Exists(p_imagepath)) return;
+            if (_imgProcessed.Bitmap == null) return;
 
+            // make file name
+            string dir = Path.GetDirectoryName(p_imagepath);
+            string name = Path.GetFileNameWithoutExtension(p_imagepath) + "write";
+            string path = Path.Combine(dir, name + ".jpg");
+            // save file
             _watcher.EnableRaisingEvents = false;
-            // free the file
-            pictureBox1.Image.Dispose();
-            File.SetLastWriteTime(p_imagepath, DateTime.Now);
-            // restore file image
-            pictureBox1.Image = Image.FromFile(p_imagepath);
+            Jpeg.Save(_imgProcessed.Bitmap, path, (long)udQuality.Value);
             if (chkAutoLoad.Checked)
                 _watcher.EnableRaisingEvents = true;
 
-            UiStatusMessage("Rewritten: " + Path.GetFileName(p_imagepath), StatusMessageType.SM_Ok);
+            UiStatusMessage("Written: " + Path.GetFileName(path), StatusMessageType.SM_Ok);
         }
 
         private void btnWinOcrRecognize_Click(object sender, EventArgs e)
@@ -1044,6 +1111,7 @@ namespace OCRGet
 
         private void chkAutoLoad_CheckedChanged(object sender, EventArgs e)
         {
+            if (_isBooting) return;
             _watcher.EnableRaisingEvents = chkAutoLoad.Checked;
         }
 
@@ -1089,7 +1157,7 @@ namespace OCRGet
             var extension = Path.GetExtension(_autoloadFile).ToLower();
             if (!string.IsNullOrEmpty(extension) && _imageExtensions.Any(ext => ext == extension))
             {
-                OpenFile(_autoloadFile);
+                OpenFile(_autoloadFile, ImageType.External);
                 if (chkRestoreAutoLoad.Checked)
                 {
                     if (this.WindowState == FormWindowState.Minimized)
@@ -1123,11 +1191,60 @@ namespace OCRGet
         {
             chkZoom.Checked = pictureBox1.SizeMode != PictureBoxSizeMode.Zoom;
         }
+
+        private void chkProcessed_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowImage();
+        }
+
+        private void btnLoadFromFolder_Click(object sender, EventArgs e)
+        {
+            var dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            dialog.EnsurePathExists = true;
+            dialog.Multiselect = false;
+            dialog.DefaultDirectory = _autoloadFolder;
+            dialog.InitialDirectory = _autoloadFolder;
+            CommonFileDialogResult result = dialog.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
+            {
+                _autoloadFolder = dialog.FileName;
+                toolTip1.SetToolTip(btnLoadFromFolder, _autoloadFolder);
+                InitFSwatcher(_autoloadFolder);
+            }
+        }
+
+        /// <summary>
+        /// Fix mouse wheel as single increment instead of multiple
+        /// </summary>
+        private void NudScrollHandler(object sender, MouseEventArgs e)
+        {
+            NumericUpDown control = (NumericUpDown)sender;
+            ((HandledMouseEventArgs)e).Handled = true;
+            decimal value = control.Value + ((e.Delta > 0) ? control.Increment : -control.Increment);
+            control.Value = Math.Max(control.Minimum, Math.Min(value, control.Maximum));
+        }
+
+        private void nudScaleFactor_ValueChanged(object sender, EventArgs e)
+        {
+            if (!lbMarkerSnap.Visible && !lbMarkerExtern.Visible) return;
+            ImageType type = lbMarkerSnap.Visible ? ImageType.Snapped : ImageType.External;
+            if (type == ImageType.Snapped && (sender != nudScaleFactor && sender != chkScaleFactor)) return;
+            if (type == ImageType.External && (sender != nudScaleExtern && sender != chkScaleExtern)) return;
+
+            ProcessImage(_imgOriginal, _imgProcessed, type);
+            ShowImage();
+            chkZoom.Checked = false;
+            chkProcessed.Checked = true;
+        }
+
     } // Form1
 
     internal static class FormHelpers
     {
-        // Panel extension method
+        /// <summary>
+        /// Panel extension method fixing scrollbars not properly updated by default
+        /// </summary>
         public static void ForceScroll(this Panel panel, int v, int h)
         {
             panel.VerticalScroll.Value = v;
@@ -1135,5 +1252,64 @@ namespace OCRGet
             panel.HorizontalScroll.Value = h;
             panel.HorizontalScroll.Value = h;
         }
-    }
+    } // FormHelpers
+
+    internal class MemoryImage
+    {
+        public byte[] Bytes { get; private set; }
+        public Bitmap Bitmap { get; private set; }
+        private MemoryStream _stream = null; // needed to save image
+        private bool _referenced = false;
+
+        public MemoryImage()
+        {
+            Bytes = null;
+            Bitmap = null;
+        }
+
+        public void FromFile(string path)
+        {
+            if (!_referenced)
+            {
+                Bitmap?.Dispose();
+                _stream?.Dispose();
+            }
+            Bytes = File.ReadAllBytes(path);
+            _stream = new MemoryStream(Bytes);
+            Bitmap = new Bitmap(_stream);
+            _referenced = false;
+        }
+
+        /// <summary>
+        /// Take stream and keep it.
+        /// </summary>
+        public void FromStream(MemoryStream stream)
+        {
+            if (!_referenced)
+            {
+                Bitmap?.Dispose();
+                _stream?.Dispose();
+            }
+            Bytes = stream.ToArray();
+            Bitmap = new Bitmap(stream);
+            _stream = stream;
+            _referenced = false;
+        }
+
+        /// <summary>
+        /// Assign by reference!
+        /// </summary>
+        public void From(MemoryImage image)
+        {
+            if (!_referenced)
+            {
+                Bitmap?.Dispose();
+                _stream?.Dispose();
+            }
+            Bytes = image.Bytes;
+            Bitmap = image.Bitmap;
+            _stream = image._stream;
+            _referenced = true;
+        }
+    } // MemoryImage
 }
