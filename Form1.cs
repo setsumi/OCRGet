@@ -1123,12 +1123,12 @@ namespace OCRGet
             {
                 case WatcherChangeTypes.Created:
                 case WatcherChangeTypes.Changed:
-                    Invoke((MethodInvoker)delegate
+                    this.BeginInvoke(new MethodInvoker(delegate
                     {
                         tmrAutoload.Stop();
                         _autoloadFile = e.FullPath;
                         tmrAutoload.Start();
-                    });
+                    }));
                     break;
             }
         }
@@ -1140,12 +1140,12 @@ namespace OCRGet
             switch (e.ChangeType)
             {
                 case WatcherChangeTypes.Renamed:
-                    Invoke((MethodInvoker)delegate
+                    this.BeginInvoke(new MethodInvoker(delegate
                     {
                         tmrAutoload.Stop();
                         _autoloadFile = e.FullPath;
                         tmrAutoload.Start();
-                    });
+                    }));
                     break;
             }
         }
