@@ -1099,7 +1099,7 @@ namespace OCRGet
 
             // make file name
             string dir = Path.GetDirectoryName(p_imagepath);
-            string name = Path.GetFileNameWithoutExtension(p_imagepath) + "write";
+            string name = Path.GetFileNameWithoutExtension(p_imagepath) + "processed";
             string path = Path.Combine(dir, name + ".jpg");
             // save file
             _watcher.EnableRaisingEvents = false;
