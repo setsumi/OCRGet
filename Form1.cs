@@ -193,7 +193,7 @@ namespace OCRGet
             nudScaleFactor.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
             nudScaleExtern.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
             udQuality.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
-            udAutorecognize.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
+            nudAutorecognize.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
 
             cmbLanguage.Items.Clear();
             foreach (var item in _lnglist)
@@ -343,9 +343,15 @@ namespace OCRGet
             txtResult.Font = f;
             chkAutocopy.Checked = bool.Parse(_inidata["general"]["autocopy"]);
             chkAutorecognize.Checked = bool.Parse(_inidata["general"]["autorecognize"]);
-            string v;
+            string v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autorecognizeDelay", out v);
-            udAutorecognize.Value = decimal.Parse(string.IsNullOrEmpty(v) ? "0" : v);
+            nudAutorecognize.Value = decimal.Parse(string.IsNullOrEmpty(v) ? "0" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autowrite", out v);
+            chkAutowrite.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "autowriteDelay", out v);
+            nudAutowrite.Value = decimal.Parse(string.IsNullOrEmpty(v) ? "0" : v);
             chkRestore.Checked = bool.Parse(_inidata["general"]["restoreapp"]);
             udQuality.Value = decimal.Parse(_inidata["general"]["jpegquality"]);
             chkClearCache.Checked = bool.Parse(_inidata["general"]["clearcache"]);
@@ -424,7 +430,9 @@ namespace OCRGet
             _inidata["general"]["language"] = cmbLanguage.SelectedIndex.ToString();
             _inidata["general"]["autocopy"] = chkAutocopy.Checked.ToString();
             _inidata["general"]["autorecognize"] = chkAutorecognize.Checked.ToString();
-            _inidata["general"]["autorecognizeDelay"] = udAutorecognize.Value.ToString();
+            _inidata["general"]["autorecognizeDelay"] = nudAutorecognize.Value.ToString();
+            _inidata["general"]["autowrite"] = chkAutowrite.Checked.ToString();
+            _inidata["general"]["autowriteDelay"] = nudAutowrite.Value.ToString();
             _inidata["general"]["restoreapp"] = chkRestore.Checked.ToString();
             _inidata["general"]["jpegquality"] = udQuality.Value.ToString();
             _inidata["general"]["clearcache"] = chkClearCache.Checked.ToString();
@@ -489,15 +497,31 @@ namespace OCRGet
 
             if (chkAutorecognize.Checked)
             {
-                int delay = (int)udAutorecognize.Value;
+                int delay = (int)nudAutorecognize.Value;
                 if (delay > 0)
                 {
+                    tmrAutorecognize.Stop();
                     tmrAutorecognize.Interval = delay;
-                    tmrAutorecognize.Enabled = true;
+                    tmrAutorecognize.Start();
                 }
                 else
                 {
-                    Recognize(p_ocr);
+                    tmrAutorecognize_Tick(null, null);
+                }
+            }
+
+            if (chkAutowrite.Checked)
+            {
+                int delay = (int)nudAutowrite.Value;
+                if (delay > 0)
+                {
+                    tmrAutowrite.Stop();
+                    tmrAutowrite.Interval = delay;
+                    tmrAutowrite.Start();
+                }
+                else
+                {
+                    tmrAutowrite_Tick(null, null);
                 }
             }
         }
@@ -538,8 +562,14 @@ namespace OCRGet
 
         private void tmrAutorecognize_Tick(object sender, EventArgs e)
         {
-            tmrAutorecognize.Enabled = false;
+            tmrAutorecognize.Stop();
             Recognize(p_ocr);
+        }
+
+        private void tmrAutowrite_Tick(object sender, EventArgs e)
+        {
+            tmrAutowrite.Stop();
+            btnRewrite_Click(null, null);
         }
 
         private void btnOpen_Click(object sender, EventArgs e)

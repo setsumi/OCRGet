@@ -38,13 +38,16 @@
             this.btnCopy = new System.Windows.Forms.Button();
             this.cmbLanguage = new System.Windows.Forms.ComboBox();
             this.grpbSettings = new System.Windows.Forms.GroupBox();
+            this.nudAutowrite = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.chkAutowrite = new System.Windows.Forms.CheckBox();
             this.btnLoadFromFolder = new System.Windows.Forms.Button();
             this.nudScaleExtern = new System.Windows.Forms.NumericUpDown();
             this.chkScaleExtern = new System.Windows.Forms.CheckBox();
             this.chkRecycle = new System.Windows.Forms.CheckBox();
             this.chkRestoreAutoLoad = new System.Windows.Forms.CheckBox();
             this.chkAutoLoad = new System.Windows.Forms.CheckBox();
-            this.udAutorecognize = new System.Windows.Forms.NumericUpDown();
+            this.nudAutorecognize = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.nudScaleFactor = new System.Windows.Forms.NumericUpDown();
             this.chkScaleFactor = new System.Windows.Forms.CheckBox();
@@ -94,9 +97,11 @@
             this.lbLastAction = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.tmrAutowrite = new System.Windows.Forms.Timer(this.components);
             this.grpbSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutowrite)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudScaleExtern)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutorecognize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudScaleFactor)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -188,13 +193,16 @@
             // grpbSettings
             // 
             this.grpbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpbSettings.Controls.Add(this.nudAutowrite);
+            this.grpbSettings.Controls.Add(this.label3);
+            this.grpbSettings.Controls.Add(this.chkAutowrite);
             this.grpbSettings.Controls.Add(this.btnLoadFromFolder);
             this.grpbSettings.Controls.Add(this.nudScaleExtern);
             this.grpbSettings.Controls.Add(this.chkScaleExtern);
             this.grpbSettings.Controls.Add(this.chkRecycle);
             this.grpbSettings.Controls.Add(this.chkRestoreAutoLoad);
             this.grpbSettings.Controls.Add(this.chkAutoLoad);
-            this.grpbSettings.Controls.Add(this.udAutorecognize);
+            this.grpbSettings.Controls.Add(this.nudAutorecognize);
             this.grpbSettings.Controls.Add(this.label2);
             this.grpbSettings.Controls.Add(this.nudScaleFactor);
             this.grpbSettings.Controls.Add(this.chkScaleFactor);
@@ -214,12 +222,50 @@
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Program settings";
             // 
+            // nudAutowrite
+            // 
+            this.nudAutowrite.BackColor = System.Drawing.SystemColors.Window;
+            this.nudAutowrite.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudAutowrite.Location = new System.Drawing.Point(133, 40);
+            this.nudAutowrite.Maximum = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.nudAutowrite.Name = "nudAutowrite";
+            this.nudAutowrite.Size = new System.Drawing.Size(44, 20);
+            this.nudAutowrite.TabIndex = 4;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(177, 43);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(20, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "ms";
+            // 
+            // chkAutowrite
+            // 
+            this.chkAutowrite.AutoSize = true;
+            this.chkAutowrite.Location = new System.Drawing.Point(6, 41);
+            this.chkAutowrite.Name = "chkAutowrite";
+            this.chkAutowrite.Size = new System.Drawing.Size(97, 17);
+            this.chkAutowrite.TabIndex = 3;
+            this.chkAutowrite.Text = "Auto write after";
+            this.toolTip1.SetToolTip(this.chkAutowrite, "Write processed images.\r\nNote: Intended for use with external software.");
+            this.chkAutowrite.UseVisualStyleBackColor = true;
+            // 
             // btnLoadFromFolder
             // 
-            this.btnLoadFromFolder.Location = new System.Drawing.Point(171, 107);
+            this.btnLoadFromFolder.Location = new System.Drawing.Point(171, 130);
             this.btnLoadFromFolder.Name = "btnLoadFromFolder";
             this.btnLoadFromFolder.Size = new System.Drawing.Size(31, 23);
-            this.btnLoadFromFolder.TabIndex = 8;
+            this.btnLoadFromFolder.TabIndex = 11;
             this.btnLoadFromFolder.Text = "...";
             this.btnLoadFromFolder.UseVisualStyleBackColor = true;
             this.btnLoadFromFolder.Click += new System.EventHandler(this.btnLoadFromFolder_Click);
@@ -245,7 +291,7 @@
             65536});
             this.nudScaleExtern.Name = "nudScaleExtern";
             this.nudScaleExtern.Size = new System.Drawing.Size(44, 20);
-            this.nudScaleExtern.TabIndex = 13;
+            this.nudScaleExtern.TabIndex = 16;
             this.nudScaleExtern.Value = new decimal(new int[] {
             1,
             0,
@@ -259,7 +305,7 @@
             this.chkScaleExtern.Location = new System.Drawing.Point(231, 42);
             this.chkScaleExtern.Name = "chkScaleExtern";
             this.chkScaleExtern.Size = new System.Drawing.Size(85, 17);
-            this.chkScaleExtern.TabIndex = 12;
+            this.chkScaleExtern.TabIndex = 15;
             this.chkScaleExtern.Text = "Scale extern";
             this.toolTip1.SetToolTip(this.chkScaleExtern, "Scale external image, which improves OCR results");
             this.chkScaleExtern.UseVisualStyleBackColor = true;
@@ -271,7 +317,7 @@
             this.chkRecycle.Location = new System.Drawing.Point(331, 87);
             this.chkRecycle.Name = "chkRecycle";
             this.chkRecycle.Size = new System.Drawing.Size(38, 17);
-            this.chkRecycle.TabIndex = 17;
+            this.chkRecycle.TabIndex = 20;
             this.chkRecycle.Text = "🗑";
             this.toolTip1.SetToolTip(this.chkRecycle, "Delete to Recycle Bin (slow)");
             this.chkRecycle.UseVisualStyleBackColor = true;
@@ -279,48 +325,47 @@
             // chkRestoreAutoLoad
             // 
             this.chkRestoreAutoLoad.AutoSize = true;
-            this.chkRestoreAutoLoad.Location = new System.Drawing.Point(6, 133);
+            this.chkRestoreAutoLoad.Location = new System.Drawing.Point(218, 133);
             this.chkRestoreAutoLoad.Name = "chkRestoreAutoLoad";
             this.chkRestoreAutoLoad.Size = new System.Drawing.Size(146, 17);
-            this.chkRestoreAutoLoad.TabIndex = 9;
+            this.chkRestoreAutoLoad.TabIndex = 12;
             this.chkRestoreAutoLoad.Text = "Restore app on auto load";
             this.chkRestoreAutoLoad.UseVisualStyleBackColor = true;
             // 
             // chkAutoLoad
             // 
             this.chkAutoLoad.AutoSize = true;
-            this.chkAutoLoad.Location = new System.Drawing.Point(6, 110);
+            this.chkAutoLoad.Location = new System.Drawing.Point(6, 133);
             this.chkAutoLoad.Name = "chkAutoLoad";
             this.chkAutoLoad.Size = new System.Drawing.Size(159, 17);
-            this.chkAutoLoad.TabIndex = 7;
+            this.chkAutoLoad.TabIndex = 10;
             this.chkAutoLoad.Text = "Auto load images from folder";
             this.toolTip1.SetToolTip(this.chkAutoLoad, "Load images from external application");
             this.chkAutoLoad.UseVisualStyleBackColor = true;
             this.chkAutoLoad.CheckedChanged += new System.EventHandler(this.chkAutoLoad_CheckedChanged);
             // 
-            // udAutorecognize
+            // nudAutorecognize
             // 
-            this.udAutorecognize.BackColor = System.Drawing.SystemColors.Window;
-            this.udAutorecognize.Increment = new decimal(new int[] {
+            this.nudAutorecognize.BackColor = System.Drawing.SystemColors.Window;
+            this.nudAutorecognize.Increment = new decimal(new int[] {
             100,
             0,
             0,
             0});
-            this.udAutorecognize.Location = new System.Drawing.Point(164, 17);
-            this.udAutorecognize.Maximum = new decimal(new int[] {
+            this.nudAutorecognize.Location = new System.Drawing.Point(133, 17);
+            this.nudAutorecognize.Maximum = new decimal(new int[] {
             9000,
             0,
             0,
             0});
-            this.udAutorecognize.Name = "udAutorecognize";
-            this.udAutorecognize.Size = new System.Drawing.Size(44, 20);
-            this.udAutorecognize.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.udAutorecognize, "Auto recognize delay");
+            this.nudAutorecognize.Name = "nudAutorecognize";
+            this.nudAutorecognize.Size = new System.Drawing.Size(44, 20);
+            this.nudAutorecognize.TabIndex = 1;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(208, 20);
+            this.label2.Location = new System.Drawing.Point(177, 20);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(20, 13);
             this.label2.TabIndex = 2;
@@ -347,7 +392,7 @@
             65536});
             this.nudScaleFactor.Name = "nudScaleFactor";
             this.nudScaleFactor.Size = new System.Drawing.Size(44, 20);
-            this.nudScaleFactor.TabIndex = 11;
+            this.nudScaleFactor.TabIndex = 14;
             this.nudScaleFactor.Value = new decimal(new int[] {
             1,
             0,
@@ -361,7 +406,7 @@
             this.chkScaleFactor.Location = new System.Drawing.Point(231, 19);
             this.chkScaleFactor.Name = "chkScaleFactor";
             this.chkScaleFactor.Size = new System.Drawing.Size(79, 17);
-            this.chkScaleFactor.TabIndex = 10;
+            this.chkScaleFactor.TabIndex = 13;
             this.chkScaleFactor.Text = "Scale snap";
             this.toolTip1.SetToolTip(this.chkScaleFactor, "Scale snapped image, which improves OCR results");
             this.chkScaleFactor.UseVisualStyleBackColor = true;
@@ -370,10 +415,10 @@
             // chkRemoveSpaces
             // 
             this.chkRemoveSpaces.AutoSize = true;
-            this.chkRemoveSpaces.Location = new System.Drawing.Point(129, 87);
+            this.chkRemoveSpaces.Location = new System.Drawing.Point(129, 110);
             this.chkRemoveSpaces.Name = "chkRemoveSpaces";
             this.chkRemoveSpaces.Size = new System.Drawing.Size(103, 17);
-            this.chkRemoveSpaces.TabIndex = 6;
+            this.chkRemoveSpaces.TabIndex = 9;
             this.chkRemoveSpaces.Text = "Remove spaces";
             this.chkRemoveSpaces.UseVisualStyleBackColor = true;
             this.chkRemoveSpaces.CheckedChanged += new System.EventHandler(this.chkRemoveLinebreaks_CheckedChanged);
@@ -381,10 +426,10 @@
             // chkRemoveLinebreaks
             // 
             this.chkRemoveLinebreaks.AutoSize = true;
-            this.chkRemoveLinebreaks.Location = new System.Drawing.Point(6, 87);
+            this.chkRemoveLinebreaks.Location = new System.Drawing.Point(6, 110);
             this.chkRemoveLinebreaks.Name = "chkRemoveLinebreaks";
             this.chkRemoveLinebreaks.Size = new System.Drawing.Size(117, 17);
-            this.chkRemoveLinebreaks.TabIndex = 5;
+            this.chkRemoveLinebreaks.TabIndex = 8;
             this.chkRemoveLinebreaks.Text = "Remove linebreaks";
             this.chkRemoveLinebreaks.UseVisualStyleBackColor = true;
             this.chkRemoveLinebreaks.CheckedChanged += new System.EventHandler(this.chkRemoveLinebreaks_CheckedChanged);
@@ -395,7 +440,7 @@
             this.chkShowProgress.Location = new System.Drawing.Point(242, 110);
             this.chkShowProgress.Name = "chkShowProgress";
             this.chkShowProgress.Size = new System.Drawing.Size(96, 17);
-            this.chkShowProgress.TabIndex = 18;
+            this.chkShowProgress.TabIndex = 21;
             this.chkShowProgress.Text = "Show progress";
             this.toolTip1.SetToolTip(this.chkShowProgress, "Show pop-up indicator while web request is in progress.\r\nNote: Deactivates \"Resto" +
         "re app after region snap\" option.");
@@ -407,7 +452,7 @@
             this.chkClearCache.Location = new System.Drawing.Point(242, 87);
             this.chkClearCache.Name = "chkClearCache";
             this.chkClearCache.Size = new System.Drawing.Size(83, 17);
-            this.chkClearCache.TabIndex = 16;
+            this.chkClearCache.TabIndex = 19;
             this.chkClearCache.Text = "Clear cache";
             this.toolTip1.SetToolTip(this.chkClearCache, "Delete images from cache folder when program starts.\r\nTip: Click window system me" +
         "nu to explore cache folder.");
@@ -419,7 +464,7 @@
             this.udQuality.Location = new System.Drawing.Point(320, 63);
             this.udQuality.Name = "udQuality";
             this.udQuality.Size = new System.Drawing.Size(44, 20);
-            this.udQuality.TabIndex = 15;
+            this.udQuality.TabIndex = 18;
             this.toolTip1.SetToolTip(this.udQuality, "Quality of generated JPEG images");
             this.udQuality.Value = new decimal(new int[] {
             90,
@@ -433,17 +478,17 @@
             this.label1.Location = new System.Drawing.Point(244, 65);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 14;
+            this.label1.TabIndex = 17;
             this.label1.Text = "JPEG quality";
             this.toolTip1.SetToolTip(this.label1, "Quality of generated JPEG images");
             // 
             // chkRestore
             // 
             this.chkRestore.AutoSize = true;
-            this.chkRestore.Location = new System.Drawing.Point(6, 64);
+            this.chkRestore.Location = new System.Drawing.Point(6, 87);
             this.chkRestore.Name = "chkRestore";
             this.chkRestore.Size = new System.Drawing.Size(166, 17);
-            this.chkRestore.TabIndex = 4;
+            this.chkRestore.TabIndex = 7;
             this.chkRestore.Text = "Restore app after region snap";
             this.toolTip1.SetToolTip(this.chkRestore, "Have no effect when \"Show progress\" is used");
             this.chkRestore.UseVisualStyleBackColor = true;
@@ -453,18 +498,19 @@
             this.chkAutorecognize.AutoSize = true;
             this.chkAutorecognize.Location = new System.Drawing.Point(6, 18);
             this.chkAutorecognize.Name = "chkAutorecognize";
-            this.chkAutorecognize.Size = new System.Drawing.Size(162, 17);
+            this.chkAutorecognize.Size = new System.Drawing.Size(121, 17);
             this.chkAutorecognize.TabIndex = 0;
-            this.chkAutorecognize.Text = "Auto recognize after opening";
+            this.chkAutorecognize.Text = "Auto recognize after";
+            this.toolTip1.SetToolTip(this.chkAutorecognize, "Recognize opened images");
             this.chkAutorecognize.UseVisualStyleBackColor = true;
             // 
             // chkAutocopy
             // 
             this.chkAutocopy.AutoSize = true;
-            this.chkAutocopy.Location = new System.Drawing.Point(6, 41);
+            this.chkAutocopy.Location = new System.Drawing.Point(6, 64);
             this.chkAutocopy.Name = "chkAutocopy";
             this.chkAutocopy.Size = new System.Drawing.Size(136, 17);
-            this.chkAutocopy.TabIndex = 3;
+            this.chkAutocopy.TabIndex = 6;
             this.chkAutocopy.Text = "Auto copy resulting text";
             this.chkAutocopy.UseVisualStyleBackColor = true;
             // 
@@ -854,6 +900,11 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
+            // tmrAutowrite
+            // 
+            this.tmrAutowrite.Interval = 1000;
+            this.tmrAutowrite.Tick += new System.EventHandler(this.tmrAutowrite_Tick);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -890,8 +941,9 @@
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.grpbSettings.ResumeLayout(false);
             this.grpbSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutowrite)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudScaleExtern)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAutorecognize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutorecognize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudScaleFactor)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQuality)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
@@ -952,7 +1004,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
         private System.Windows.Forms.NumericUpDown nudScaleFactor;
         private System.Windows.Forms.CheckBox chkScaleFactor;
-        private System.Windows.Forms.NumericUpDown udAutorecognize;
+        private System.Windows.Forms.NumericUpDown nudAutorecognize;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Timer tmrAutorecognize;
         private System.Windows.Forms.Button btnRewrite;
@@ -974,6 +1026,10 @@
         private System.Windows.Forms.Button btnLoadFromFolder;
         private System.Windows.Forms.Label lbMarkerSnap;
         private System.Windows.Forms.Label lbMarkerExtern;
+        private System.Windows.Forms.NumericUpDown nudAutowrite;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox chkAutowrite;
+        private System.Windows.Forms.Timer tmrAutowrite;
     }
 }
 
