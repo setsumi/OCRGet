@@ -105,7 +105,7 @@ namespace OCRGet
         private string p_imagepath { get; set; }
         private string p_imagesize { get; set; }
 
-        private Credential[] _creds;
+        private Credential[] _creds = null;
         private int[] _enginecreds = { 0, 0, 0 };
 
         private Credential p_cred
@@ -165,11 +165,11 @@ namespace OCRGet
         private string p_resulttext { get; set; }
         private int p_nettimeout { get; set; }
 
-        private FileIniDataParser _config;
-        private IniData _inidata;
+        private FileIniDataParser _config = null;
+        private IniData _inidata = null;
         private string _inifile;
         private int _hotkeyID = 0;
-        private FileSystemWatcher _watcher;
+        private FileSystemWatcher _watcher = null;
         private string _autoloadFile = "";
         private string _autoloadFolder = "";
         private string[] _imageExtensions = { ".jpg", ".jpeg", ".png" };
@@ -247,7 +247,12 @@ namespace OCRGet
 
         private void InitFSwatcher(string folder)
         {
-            _watcher?.Dispose();
+            if (_watcher != null)
+            {
+                _watcher.EnableRaisingEvents = false;
+                _watcher.Dispose();
+                _watcher = null;
+            }
             _watcher = new FileSystemWatcher(folder);
             _watcher.NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.FileName |
                 NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Size;
@@ -1267,17 +1272,28 @@ namespace OCRGet
             Bitmap = null;
         }
 
+        /// <summary>
+        /// Resets _referenced flag.
+        /// </summary>
+        private void Free()
+        {
+            _referenced = false;
+            Bytes = null;
+            Bitmap?.Dispose();
+            Bitmap = null;
+            _stream?.Dispose();
+            _stream = null;
+        }
+
         public void FromFile(string path)
         {
             if (!_referenced)
             {
-                Bitmap?.Dispose();
-                _stream?.Dispose();
+                Free();
             }
             Bytes = File.ReadAllBytes(path);
             _stream = new MemoryStream(Bytes);
             Bitmap = new Bitmap(_stream);
-            _referenced = false;
         }
 
         /// <summary>
@@ -1287,29 +1303,26 @@ namespace OCRGet
         {
             if (!_referenced)
             {
-                Bitmap?.Dispose();
-                _stream?.Dispose();
+                Free();
             }
             Bytes = stream.ToArray();
             Bitmap = new Bitmap(stream);
             _stream = stream;
-            _referenced = false;
         }
 
         /// <summary>
-        /// Assign by reference!
+        /// Assignment by reference!
         /// </summary>
         public void From(MemoryImage image)
         {
             if (!_referenced)
             {
-                Bitmap?.Dispose();
-                _stream?.Dispose();
+                Free();
             }
+            _referenced = true;
             Bytes = image.Bytes;
             Bitmap = image.Bitmap;
             _stream = image._stream;
-            _referenced = true;
         }
     } // MemoryImage
 }
