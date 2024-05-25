@@ -194,6 +194,7 @@ namespace OCRGet
             nudScaleExtern.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
             udQuality.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
             nudAutorecognize.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
+            nudAutowrite.MouseWheel += new MouseEventHandler(this.NudScrollHandler);
 
             cmbLanguage.Items.Clear();
             foreach (var item in _lnglist)
