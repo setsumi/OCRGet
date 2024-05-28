@@ -756,7 +756,9 @@ namespace OCRGet
             }
 
             if (chkRestore.Checked && chkShowProgress.Checked && this.WindowState == FormWindowState.Minimized)
-                this.WindowState = FormWindowState.Normal;
+            {
+                FormHelpers.BringWindowToFront(this.Handle);
+            }
         }
 
         private void btnRecognize_Click(object sender, EventArgs e)
@@ -1196,9 +1198,7 @@ namespace OCRGet
                 OpenFile(_autoloadFile, ImageType.External);
                 if (chkRestoreAutoLoad.Checked)
                 {
-                    if (this.WindowState == FormWindowState.Minimized)
-                        this.WindowState = FormWindowState.Normal;
-                    this.Activate();
+                    FormHelpers.BringWindowToFront(this.Handle);
                 }
             }
         }
@@ -1287,6 +1287,53 @@ namespace OCRGet
             panel.VerticalScroll.Value = v;
             panel.HorizontalScroll.Value = h;
             panel.HorizontalScroll.Value = h;
+        }
+
+        public static bool BringWindowToFront(IntPtr hwnd)
+        {
+            uint lForeThreadID;
+            uint lThisThreadID;
+            bool lReturn = true;
+
+            // Make a window, specified by its handle (hwnd)
+            // the foreground window.
+
+            // If it is already the foreground window, exit.
+            if (hwnd != NativeMethods.GetForegroundWindow())
+            {
+
+                // Get the threads for this window and the foreground window.
+                lForeThreadID = NativeMethods.GetWindowThreadProcessId(NativeMethods.GetForegroundWindow(), out _);
+                lThisThreadID = NativeMethods.GetWindowThreadProcessId(hwnd, out _);
+
+                // By sharing input state, threads share their concept of
+                // the active window.
+
+                if (lForeThreadID != lThisThreadID)
+                {
+                    // Attach the foreground thread to this window.
+                    Winapi.AttachThreadInput(lForeThreadID, lThisThreadID, true);
+                    // Make this window the foreground window.
+                    lReturn = NativeMethods.SetForegroundWindow(hwnd);
+                    // Detach the foreground window's thread from this window.
+                    Winapi.AttachThreadInput(lForeThreadID, lThisThreadID, false);
+                }
+                else
+                {
+                    lReturn = NativeMethods.SetForegroundWindow(hwnd);
+                }
+
+                // Restore this window to its normal size.
+                if (NativeMethods.IsIconic(hwnd))
+                {
+                    Winapi.ShowWindow(hwnd, WindowShowStyle.Restore);
+                }
+                else
+                {
+                    Winapi.ShowWindow(hwnd, WindowShowStyle.Show);
+                }
+            }
+            return lReturn;
         }
     } // FormHelpers
 

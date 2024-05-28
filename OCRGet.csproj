@@ -140,6 +140,7 @@
     <Compile Include="thirdparty\NativeMethods.cs" />
     <Compile Include="thirdparty\NativeMethods_Helpers.cs" />
     <Compile Include="thirdparty\NativeStructs.cs" />
+    <Compile Include="Winapi.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
