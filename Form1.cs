@@ -641,8 +641,8 @@ namespace OCRGet
                 _formn1.BackColor = Color.Black;
                 _formn1.Width = 200;
                 _formn1.Height = 20;
-                _formn1.Left = 0;
-                _formn1.Top = Screen.PrimaryScreen.Bounds.Height - _formn1.Height;
+                _formn1.Left = Screen.PrimaryScreen.WorkingArea.Left;
+                _formn1.Top = Screen.PrimaryScreen.WorkingArea.Top + Screen.PrimaryScreen.WorkingArea.Height - _formn1.Height;
                 _formn1.Paint += new PaintEventHandler(formn1_Paint);
                 _formn1.Show();
             }
