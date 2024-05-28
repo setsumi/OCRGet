@@ -585,7 +585,14 @@ namespace OCRGet
 
         void formn1_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawString("Requesting OCR responce...", new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold), Brushes.Lime, 0, 0);
+            var form = sender as Form;
+            var text = form.Tag as string;
+            SizeF textSize = e.Graphics.MeasureString(text, form.Font);
+            _formn1.Left = Screen.PrimaryScreen.WorkingArea.Left;
+            _formn1.Top = Screen.PrimaryScreen.WorkingArea.Top + Screen.PrimaryScreen.WorkingArea.Height - (int)textSize.Height;
+            _formn1.Width = (int)textSize.Width;
+            _formn1.Height = (int)textSize.Height;
+            e.Graphics.DrawString(text, form.Font, Brushes.Lime, 0, 0);
         }
 
         private void Recognize(int ocr)
@@ -637,12 +644,11 @@ namespace OCRGet
             if (chkShowProgress.Checked)
             {
                 _formn1 = new FormDraw();
+                _formn1.Tag = "Requesting OCR responce...";
+                _formn1.Font = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Bold);
+                _formn1.Left = 0; _formn1.Top = 0; _formn1.Width = 1; _formn1.Height = 1;
                 _formn1.Opacity = 1.0;
                 _formn1.BackColor = Color.Black;
-                _formn1.Width = 200;
-                _formn1.Height = 20;
-                _formn1.Left = Screen.PrimaryScreen.WorkingArea.Left;
-                _formn1.Top = Screen.PrimaryScreen.WorkingArea.Top + Screen.PrimaryScreen.WorkingArea.Height - _formn1.Height;
                 _formn1.Paint += new PaintEventHandler(formn1_Paint);
                 _formn1.Show();
             }
