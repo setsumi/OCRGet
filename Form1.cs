@@ -812,12 +812,12 @@ namespace OCRGet
                 OpenFile(p_imagepath, ImageType.Snapped);
 
                 if (chkRestore.Checked && !chkShowProgress.Checked)
-                    this.WindowState = FormWindowState.Normal;
+                    FormHelpers.BringWindowToFront(this.Handle);
             }
             else // snap cancelled
             {
                 if (chkRestore.Checked)
-                    this.WindowState = FormWindowState.Normal;
+                    FormHelpers.BringWindowToFront(this.Handle);
             }
             _formd1.Dispose();
             _formd1 = null;
