@@ -38,8 +38,9 @@ namespace OCRGet
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool InsertMenu(IntPtr hMenu, int uPosition, int uFlags, int uIDNewItem, string lpNewItem);
 
-        // ID for the Open item on the system menu
-        private const int SYSMENU_OPEN_ID = 0x1;
+        // IDs for the items on the system menu
+        private const int SYSMENU_EXPLORE_CACHE = 0x1;
+        private const int SYSMENU_ABOUTBOX = 0x2;
 
         enum ImageType { Snapped, External, Dontknow }
 
@@ -177,6 +178,7 @@ namespace OCRGet
         private MemoryImage _imgOriginal = new MemoryImage();
         private MemoryImage _imgProcessed = new MemoryImage();
         private bool _isBooting = true;
+        private bool _allowFormShow = true; // used for hiding form to tray on start
 
         public Form1()
         {
@@ -215,6 +217,23 @@ namespace OCRGet
 
             RegisterHotkey();
             InitFSwatcher(_autoloadFolder);
+
+            // command line arguments
+            string[] args = Environment.GetCommandLineArgs();
+            foreach (var arg in args)
+            {
+                if (arg == Application.ExecutablePath) continue;
+                switch (arg.ToLower())
+                {
+                    case "/tray":
+                        _allowFormShow = false;
+                        UiHide();
+                        break;
+                    default:
+                        MessageBox.Show($"Invalid command line argument: {arg}", "OCRGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                }
+            }
 
             _isBooting = false;
         }
@@ -763,7 +782,7 @@ namespace OCRGet
 
             if (chkRestore.Checked && chkShowProgress.Checked && this.WindowState == FormWindowState.Minimized)
             {
-                FormHelpers.BringWindowToFront(this.Handle);
+                FormHelpers.BringWindowToFront(this.Handle, this.Visible);
             }
         }
 
@@ -812,12 +831,12 @@ namespace OCRGet
                 OpenFile(p_imagepath, ImageType.Snapped);
 
                 if (chkRestore.Checked && !chkShowProgress.Checked)
-                    FormHelpers.BringWindowToFront(this.Handle);
+                    FormHelpers.BringWindowToFront(this.Handle, this.Visible);
             }
             else // snap cancelled
             {
                 if (chkRestore.Checked)
-                    FormHelpers.BringWindowToFront(this.Handle);
+                    FormHelpers.BringWindowToFront(this.Handle, this.Visible);
             }
             _formd1.Dispose();
             _formd1 = null;
@@ -981,33 +1000,56 @@ namespace OCRGet
             }
         }
 
+        const int WM_NCRBUTTONDOWN = 0x00A4;
+        const int HTMINBUTTON = 8;
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == (int)WindowsMessages.HOTKEY)
+            switch (m.Msg)
             {
-                //ushort id = (ushort)m.WParam;
-                //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
-                //Modifiers modifier = (Modifiers)((int)m.LParam & 0xFFFF);
-                //OnKeyPressed(id, key, modifier);
+                case (int)WindowsMessages.HOTKEY:
+                    {
+                        //ushort id = (ushort)m.WParam;
+                        //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
+                        //Modifiers modifier = (Modifiers)((int)m.LParam & 0xFFFF);
+                        //OnKeyPressed(id, key, modifier);
 
-                // only one hotkey yet so no need to check for modifiers/keys
-                if (btnRegion.Enabled && _formd1 == null)
-                    btnRegion_Click(this, null);
-                return;
+                        // only one hotkey yet so no need to check for modifiers/keys
+                        if (btnRegion.Enabled && _formd1 == null)
+                            btnRegion_Click(this, null);
+                    }
+                    break;
+                case WM_SYSCOMMAND:
+                    switch ((int)m.WParam)
+                    {
+                        case SYSMENU_EXPLORE_CACHE:
+                            {
+                                var psi = new ProcessStartInfo
+                                {
+                                    FileName = GetCacheDir(),
+                                    UseShellExecute = true
+                                };
+                                Process.Start(psi);
+                            }
+                            break;
+                        case SYSMENU_ABOUTBOX:
+                            MessageBox.Show($"OCRGet v{Application.ProductVersion.Remove(Application.ProductVersion.LastIndexOf("."))}" +
+                                "\n\nRightClick minimize button - hide to tray." +
+                                "\n\nCommand line:" +
+                                "\n    /tray - start hidden to tray." +
+                                "\n\nNote: When hidden to tray \"Restore app\" options have no effect.", "About...", MessageBoxButtons.OK);
+                            break;
+                    }
+                    break;
+                case WM_NCRBUTTONDOWN: // non client area right click
+                    if (m.WParam == (IntPtr)HTMINBUTTON) // minimize button
+                    {
+                        UiHide();
+                        return; // do not process
+                    }
+                    break;
             }
 
             base.WndProc(ref m);
-
-            if ((m.Msg == WM_SYSCOMMAND) && ((int)m.WParam == SYSMENU_OPEN_ID))
-            {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = GetCacheDir(),
-                    UseShellExecute = true
-                };
-                Process.Start(psi);
-            }
-
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -1037,6 +1079,23 @@ namespace OCRGet
             }
             // update credential UI just in case we updated selected (focused) engine
             UiUpdateCredential();
+        }
+
+        private void UiHide()
+        {
+            this.Hide();
+            notifyIcon1.Visible = true;
+        }
+
+        private void UiShow()
+        {
+            _allowFormShow = true;
+            notifyIcon1.Visible = false;
+            this.Show();
+            this.Restore();
+            this.BringToFront();
+            this.Activate();
+            FormHelpers.BringWindowToFront(this.Handle, this.Visible);
         }
 
         private void UiUpdateCredential()
@@ -1150,7 +1209,8 @@ namespace OCRGet
 
             IntPtr hSysMenu = GetSystemMenu(this.Handle, false);
             AppendMenu(hSysMenu, MF_SEPARATOR, 0, string.Empty);
-            AppendMenu(hSysMenu, MF_STRING, SYSMENU_OPEN_ID, "&Explore cache folder...");
+            AppendMenu(hSysMenu, MF_STRING, SYSMENU_EXPLORE_CACHE, "&Explore cache folder");
+            AppendMenu(hSysMenu, MF_STRING, SYSMENU_ABOUTBOX, "About/help...");
         }
 
         private void chkAutoLoad_CheckedChanged(object sender, EventArgs e)
@@ -1204,7 +1264,7 @@ namespace OCRGet
                 OpenFile(_autoloadFile, ImageType.External);
                 if (chkRestoreAutoLoad.Checked)
                 {
-                    FormHelpers.BringWindowToFront(this.Handle);
+                    FormHelpers.BringWindowToFront(this.Handle, this.Visible);
                 }
             }
         }
@@ -1280,6 +1340,28 @@ namespace OCRGet
             chkProcessed.Checked = true;
         }
 
+        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                UiShow();
+            }
+        }
+
+        protected override void SetVisibleCore(bool value)
+        {
+            base.SetVisibleCore(_allowFormShow ? value : false);
+        }
+
+        private void showToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UiShow();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     } // Form1
 
     internal static class FormHelpers
@@ -1295,11 +1377,13 @@ namespace OCRGet
             panel.HorizontalScroll.Value = h;
         }
 
-        public static bool BringWindowToFront(IntPtr hwnd)
+        public static bool BringWindowToFront(IntPtr hwnd, bool doit)
         {
             uint lForeThreadID;
             uint lThisThreadID;
             bool lReturn = true;
+
+            if (!doit) return lReturn;
 
             // Make a window, specified by its handle (hwnd)
             // the foreground window.
@@ -1409,4 +1493,18 @@ namespace OCRGet
             _stream = image._stream;
         }
     } // MemoryImage
+}
+
+namespace System.Windows.Forms
+{
+    public static class Extensions
+    {
+        public static void Restore(this Form form)
+        {
+            if (form.WindowState == FormWindowState.Minimized)
+            {
+                NativeMethods.ShowWindow(form.Handle, (int)WindowShowStyle.Restore);
+            }
+        }
+    }
 }
