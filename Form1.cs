@@ -1093,9 +1093,7 @@ namespace OCRGet
             notifyIcon1.Visible = false;
             this.Show();
             this.Restore();
-            this.BringToFront();
-            this.Activate();
-            FormHelpers.BringWindowToFront(this.Handle, this.Visible);
+            FormHelpers.BringWindowToFront(this.Handle, true);
         }
 
         private void UiUpdateCredential()
@@ -1503,7 +1501,7 @@ namespace System.Windows.Forms
         {
             if (form.WindowState == FormWindowState.Minimized)
             {
-                NativeMethods.ShowWindow(form.Handle, (int)WindowShowStyle.Restore);
+                OCRGet.Winapi.ShowWindow(form.Handle, WindowShowStyle.Restore);
             }
         }
     }
