@@ -52,12 +52,14 @@ namespace OCRGet
         struct OcrLanguage
         {
             public readonly string Name, OcrSpace, WinOcr;
+            public readonly bool Spaced;
 
-            public OcrLanguage(string OcrSpace, string WinOcr, string Name)
+            public OcrLanguage(string OcrSpace, string WinOcr, string Name, bool Spaced)
             {
                 this.OcrSpace = OcrSpace;
                 this.WinOcr = WinOcr;
                 this.Name = Name;
+                this.Spaced = Spaced;
             }
 
             public override string ToString()
@@ -67,37 +69,37 @@ namespace OCRGet
         }
 
         private readonly OcrLanguage[] _lnglist = {
-                new OcrLanguage("ara", "ar", "Arabic"),
-                new OcrLanguage("bul", "bg", "Bulgarian"),
-                new OcrLanguage("chs", "zh-Hans", "Chinese(Simplified)"),
-                new OcrLanguage("cht", "zh-Hant", "Chinese(Traditional)"),
-                new OcrLanguage("hrv", "hr", "Croatian"),
-                new OcrLanguage("cze", "cs", "Czech"),
-                new OcrLanguage("dan", "da", "Danish"),
-                new OcrLanguage("dut", "nl", "Dutch"),
-                new OcrLanguage("eng", "en", "English"),
-                new OcrLanguage("fin", "fi", "Finnish"),
-                new OcrLanguage("fre", "fr", "French"),
-                new OcrLanguage("ger", "de", "German"),
-                new OcrLanguage("gre", "el", "Greek"),
-                new OcrLanguage("hun", "hu", "Hungarian"),
-                new OcrLanguage("kor", "ko", "Korean"),
-                new OcrLanguage("ita", "it", "Italian"),
-                new OcrLanguage("jpn", "ja", "Japanese"),
-                new OcrLanguage("pol", "pl", "Polish"),
-                new OcrLanguage("por", "pt", "Portuguese"),
-                new OcrLanguage("rus", "ru", "Russian"),
-                new OcrLanguage("slv", "sl", "Slovenian"),
-                new OcrLanguage("spa", "es", "Spanish"),
-                new OcrLanguage("swe", "sv", "Swedish"),
-                new OcrLanguage("tur", "tr", "Turkish"),
-                new OcrLanguage("hin", "hi", "Hindi ↓ engine 3 only ↓"), // Engine 3 exclusive from here on
-                new OcrLanguage("kan", "kn", "Kannada"),
-                new OcrLanguage("per", "fa", "Persian (Fari)"),
-                new OcrLanguage("tel", "te", "Telugu"),
-                new OcrLanguage("tam", "ta", "Tamil"),
-                new OcrLanguage("tai", "th", "Thai"),
-                new OcrLanguage("vie", "vi", "Vietnamese")
+                new OcrLanguage("ara", "ar", "Arabic", true),
+                new OcrLanguage("bul", "bg", "Bulgarian", true),
+                new OcrLanguage("chs", "zh-Hans", "Chinese(Simplified)", false),
+                new OcrLanguage("cht", "zh-Hant", "Chinese(Traditional)", false),
+                new OcrLanguage("hrv", "hr", "Croatian", true),
+                new OcrLanguage("cze", "cs", "Czech", true),
+                new OcrLanguage("dan", "da", "Danish", true),
+                new OcrLanguage("dut", "nl", "Dutch", true),
+                new OcrLanguage("eng", "en", "English", true),
+                new OcrLanguage("fin", "fi", "Finnish", true),
+                new OcrLanguage("fre", "fr", "French", true),
+                new OcrLanguage("ger", "de", "German", true),
+                new OcrLanguage("gre", "el", "Greek", true),
+                new OcrLanguage("hun", "hu", "Hungarian", true),
+                new OcrLanguage("kor", "ko", "Korean", true),
+                new OcrLanguage("ita", "it", "Italian", true),
+                new OcrLanguage("jpn", "ja", "Japanese", false),
+                new OcrLanguage("pol", "pl", "Polish", true),
+                new OcrLanguage("por", "pt", "Portuguese", true),
+                new OcrLanguage("rus", "ru", "Russian", true),
+                new OcrLanguage("slv", "sl", "Slovenian", true),
+                new OcrLanguage("spa", "es", "Spanish", true),
+                new OcrLanguage("swe", "sv", "Swedish", true),
+                new OcrLanguage("tur", "tr", "Turkish", true),
+                new OcrLanguage("hin", "hi", "Hindi ↓ engine 3 only ↓", true), // Engine 3 exclusive from here on
+                new OcrLanguage("kan", "kn", "Kannada", true),
+                new OcrLanguage("per", "fa", "Persian (Fari)", true),
+                new OcrLanguage("tel", "te", "Telugu", true),
+                new OcrLanguage("tam", "ta", "Tamil", true),
+                new OcrLanguage("tai", "th", "Thai", false),
+                new OcrLanguage("vie", "vi", "Vietnamese", true)
             };
 
         private FormDraw _formd1 = null; // region draw form
@@ -177,8 +179,9 @@ namespace OCRGet
         private Point _imageScroll = new Point(0, 0);
         private MemoryImage _imgOriginal = new MemoryImage();
         private MemoryImage _imgProcessed = new MemoryImage();
-        private bool _isBooting = true;
+        private bool _initForm = true;
         private bool _allowFormShow = true; // used for hiding form to tray on start
+        private FormWindowState _lastWindowState = FormWindowState.Normal;
 
         public Form1()
         {
@@ -210,6 +213,16 @@ namespace OCRGet
                 Directory.CreateDirectory(GetCacheDir());
             }
 
+            // window state
+            if (Properties.Settings.Default.winWidth > 0)
+                this.Width = Properties.Settings.Default.winWidth;
+            if (Properties.Settings.Default.winHeight > 0)
+                this.Height = Properties.Settings.Default.winHeight;
+            if (Properties.Settings.Default.winMaximized)
+                this.WindowState = FormWindowState.Maximized;
+            _lastWindowState = this.WindowState;
+
+            // config
             LoadConfig();
 
             if (chkClearCache.Checked)
@@ -235,7 +248,7 @@ namespace OCRGet
                 }
             }
 
-            _isBooting = false;
+            _initForm = false;
         }
 
         private void ClearCache()
@@ -762,7 +775,7 @@ namespace OCRGet
             {
                 // remove linebreaks
                 if (chkRemoveLinebreaks.Checked)
-                    p_resulttext = p_resulttext.Replace("\n", "").Replace("\r", "");
+                    p_resulttext = RemoveLinebreaks(p_resulttext);
                 // remove spaces
                 if (chkRemoveSpaces.Checked)
                     p_resulttext = p_resulttext.Replace(" ", "");
@@ -845,6 +858,7 @@ namespace OCRGet
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             _watcher.EnableRaisingEvents = false;
+            Properties.Settings.Default.Save();
             UnregisterHotkey();
             SaveConfig();
         }
@@ -1112,16 +1126,27 @@ namespace OCRGet
 
         private void chkRemoveLinebreaks_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initForm) return;
             if ((string)txtResult.Tag == "error") return; // don't mangle error mesage
 
             string text = txtResult.Text;
             // remove linebreaks
             if (chkRemoveLinebreaks.Checked)
-                text = text.Replace("\n", "").Replace("\r", "");
+                text = RemoveLinebreaks(text);
             // remove spaces
             if (chkRemoveSpaces.Checked)
                 text = text.Replace(" ", "");
             txtResult.Text = text;
+        }
+
+        /// <summary>
+        /// Take into consideration if language is spaced.
+        /// </summary>
+        private string RemoveLinebreaks(string text)
+        {
+            OcrLanguage lang = (OcrLanguage)cmbLanguage.SelectedItem;
+            string repl = lang.Spaced ? " " : "";
+            return text.Replace("\n", repl).Replace("\r", "").Trim();
         }
 
         enum StatusMessageType { SM_Ok, SM_Warning, SM_Error, SM_Plain }
@@ -1213,7 +1238,7 @@ namespace OCRGet
 
         private void chkAutoLoad_CheckedChanged(object sender, EventArgs e)
         {
-            if (_isBooting) return;
+            if (_initForm) return;
             _watcher.EnableRaisingEvents = chkAutoLoad.Checked;
         }
 
@@ -1359,6 +1384,29 @@ namespace OCRGet
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (_initForm) return;
+
+            if (WindowState != _lastWindowState)
+            {
+                _lastWindowState = WindowState;
+                if (WindowState == FormWindowState.Maximized) // Maximized!
+                {
+                    Properties.Settings.Default.winMaximized = true;
+                }
+                else if (WindowState == FormWindowState.Normal)
+                {
+                    Properties.Settings.Default.winMaximized = false;
+                }
+            }
+            else if (WindowState == FormWindowState.Normal) // resize
+            {
+                Properties.Settings.Default.winWidth = this.Width;
+                Properties.Settings.Default.winHeight = this.Height;
+            }
         }
     } // Form1
 
