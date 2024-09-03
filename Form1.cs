@@ -312,10 +312,10 @@ namespace OCRGet
                 _inidata["general"].AddKey("cred-apiurl1", "http://api.ocr.space/Parse/Image");
                 _inidata["general"].AddKey("cred-apikey1", "helloworld");
                 _inidata["general"].AddKey("cred-useragent1", "OCRGet");
-                _inidata["general"].AddKey("cred-name2", "Default - Firefox");
+                _inidata["general"].AddKey("cred-name2", "Default - Postman");
                 _inidata["general"].AddKey("cred-apiurl2", "http://api.ocr.space/Parse/Image");
                 _inidata["general"].AddKey("cred-apikey2", "helloworld");
-                _inidata["general"].AddKey("cred-useragent2", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36");
+                _inidata["general"].AddKey("cred-useragent2", "PostmanRuntime/7.41.2");
                 _inidata["general"].AddKey("fontsize", "9");
 
                 // ui values
