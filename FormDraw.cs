@@ -31,7 +31,8 @@ namespace OCRGet
             ShowInTaskbar = false;
             BackColor = Color.White;
             FormBorderStyle = FormBorderStyle.None;
-            Bounds = Screen.PrimaryScreen.Bounds;
+            StartPosition = FormStartPosition.Manual;
+            Bounds = Screen.FromPoint(Cursor.Position).Bounds;
             TopMost = true;
             Opacity = .004;
         }
@@ -39,10 +40,12 @@ namespace OCRGet
         private void FormDraw_MouseDown(object sender, MouseEventArgs e)
         {
             isDrawing = true;
-            startPoint.X = endPoint.X = e.X;
-            startPoint.Y = endPoint.Y = e.Y;
-            rectRegion.X = e.X;
-            rectRegion.Y = e.Y;
+
+            Point mousePos = DPIUtil.CorrectMousePos(sender as Control, e.X, e.Y);
+            startPoint.X = endPoint.X = mousePos.X;
+            startPoint.Y = endPoint.Y = mousePos.Y;
+            rectRegion.X = startPoint.X;
+            rectRegion.Y = startPoint.Y;
             rectRegion.Width = 0;
             rectRegion.Height = 0;
         }
@@ -60,8 +63,9 @@ namespace OCRGet
 
             ControlPaint.DrawReversibleFrame(rectRegion, this.BackColor, FrameStyle.Dashed);
 
-            endPoint.X = e.X;
-            endPoint.Y = e.Y;
+            Point mousePos = DPIUtil.CorrectMousePos(sender as Control, e.X, e.Y);
+            endPoint.X = mousePos.X;
+            endPoint.Y = mousePos.Y;
 
             rectRegion.X = Math.Min(startPoint.X, endPoint.X);
             rectRegion.Y = Math.Min(startPoint.Y, endPoint.Y);

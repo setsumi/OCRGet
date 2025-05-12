@@ -81,6 +81,7 @@
             this.chkProcessed = new System.Windows.Forms.CheckBox();
             this.lbMarkerSnap = new System.Windows.Forms.Label();
             this.lbMarkerExtern = new System.Windows.Forms.Label();
+            this.chkClipMon = new System.Windows.Forms.CheckBox();
             this.grpbOCR = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrStartup = new System.Windows.Forms.Timer(this.components);
@@ -102,6 +103,7 @@
             this.contextMenuStripTray = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clipMonitor = new WK.Libraries.SharpClipboardNS.SharpClipboard(this.components);
             this.grpbSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudAutowrite)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudScaleExtern)).BeginInit();
@@ -139,7 +141,7 @@
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtResult.Size = new System.Drawing.Size(287, 95);
-            this.txtResult.TabIndex = 9;
+            this.txtResult.TabIndex = 10;
             // 
             // btnRecognize
             // 
@@ -159,7 +161,7 @@
             this.btnRegion.Size = new System.Drawing.Size(75, 23);
             this.btnRegion.TabIndex = 1;
             this.btnRegion.Text = "Region...(&S)";
-            this.toolTip1.SetToolTip(this.btnRegion, "Region Snap (Ctrl+S), global (Ctrl+Alt+S)");
+            this.toolTip1.SetToolTip(this.btnRegion, "Region Snap (Ctrl+S), global (Win+Alt+S)");
             this.btnRegion.UseVisualStyleBackColor = true;
             this.btnRegion.Click += new System.EventHandler(this.btnRegion_Click);
             // 
@@ -173,10 +175,10 @@
             this.btnCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCopy.Location = new System.Drawing.Point(543, 11);
             this.btnCopy.Name = "btnCopy";
-            this.btnCopy.Size = new System.Drawing.Size(75, 23);
+            this.btnCopy.Size = new System.Drawing.Size(44, 23);
             this.btnCopy.TabIndex = 8;
             this.btnCopy.Text = "&Copy";
-            this.toolTip1.SetToolTip(this.btnCopy, "Copy Recognized Text (Ctrl+C)");
+            this.toolTip1.SetToolTip(this.btnCopy, "Copy recognized text (Ctrl+C, Ctrl+Ins)");
             this.btnCopy.UseVisualStyleBackColor = true;
             this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
             // 
@@ -223,7 +225,7 @@
             this.grpbSettings.Location = new System.Drawing.Point(245, 234);
             this.grpbSettings.Name = "grpbSettings";
             this.grpbSettings.Size = new System.Drawing.Size(373, 156);
-            this.grpbSettings.TabIndex = 14;
+            this.grpbSettings.TabIndex = 15;
             this.grpbSettings.TabStop = false;
             this.grpbSettings.Text = "Program settings";
             // 
@@ -631,7 +633,7 @@
             this.rdbOCR1.Location = new System.Drawing.Point(473, 143);
             this.rdbOCR1.Name = "rdbOCR1";
             this.rdbOCR1.Size = new System.Drawing.Size(24, 18);
-            this.rdbOCR1.TabIndex = 12;
+            this.rdbOCR1.TabIndex = 13;
             this.rdbOCR1.TabStop = true;
             this.rdbOCR1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.rdbOCR1, "Select");
@@ -647,7 +649,7 @@
             this.rdbOCR2.Location = new System.Drawing.Point(337, 143);
             this.rdbOCR2.Name = "rdbOCR2";
             this.rdbOCR2.Size = new System.Drawing.Size(24, 18);
-            this.rdbOCR2.TabIndex = 10;
+            this.rdbOCR2.TabIndex = 11;
             this.rdbOCR2.TabStop = true;
             this.rdbOCR2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.rdbOCR2, "Select");
@@ -716,7 +718,7 @@
             this.chkZoom.Location = new System.Drawing.Point(245, 96);
             this.chkZoom.Name = "chkZoom";
             this.chkZoom.Size = new System.Drawing.Size(53, 17);
-            this.chkZoom.TabIndex = 18;
+            this.chkZoom.TabIndex = 19;
             this.chkZoom.Text = "Zoom";
             this.toolTip1.SetToolTip(this.chkZoom, "Fit image in box.\r\nTip: Can also click the picture box.");
             this.chkZoom.UseVisualStyleBackColor = true;
@@ -728,7 +730,7 @@
             this.chkProcessed.Location = new System.Drawing.Point(245, 119);
             this.chkProcessed.Name = "chkProcessed";
             this.chkProcessed.Size = new System.Drawing.Size(76, 17);
-            this.chkProcessed.TabIndex = 19;
+            this.chkProcessed.TabIndex = 20;
             this.chkProcessed.Text = "Processed";
             this.toolTip1.SetToolTip(this.chkProcessed, "Show processed image sent to OCR instead of original");
             this.chkProcessed.UseVisualStyleBackColor = true;
@@ -741,7 +743,7 @@
             this.lbMarkerSnap.Location = new System.Drawing.Point(614, 254);
             this.lbMarkerSnap.Name = "lbMarkerSnap";
             this.lbMarkerSnap.Size = new System.Drawing.Size(16, 13);
-            this.lbMarkerSnap.TabIndex = 20;
+            this.lbMarkerSnap.TabIndex = 21;
             this.lbMarkerSnap.Text = "◀";
             this.toolTip1.SetToolTip(this.lbMarkerSnap, resources.GetString("lbMarkerSnap.ToolTip"));
             // 
@@ -752,9 +754,23 @@
             this.lbMarkerExtern.Location = new System.Drawing.Point(614, 277);
             this.lbMarkerExtern.Name = "lbMarkerExtern";
             this.lbMarkerExtern.Size = new System.Drawing.Size(16, 13);
-            this.lbMarkerExtern.TabIndex = 21;
+            this.lbMarkerExtern.TabIndex = 22;
             this.lbMarkerExtern.Text = "◀";
             this.toolTip1.SetToolTip(this.lbMarkerExtern, resources.GetString("lbMarkerExtern.ToolTip"));
+            // 
+            // chkClipMon
+            // 
+            this.chkClipMon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkClipMon.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkClipMon.AutoSize = true;
+            this.chkClipMon.Location = new System.Drawing.Point(591, 11);
+            this.chkClipMon.Name = "chkClipMon";
+            this.chkClipMon.Size = new System.Drawing.Size(27, 23);
+            this.chkClipMon.TabIndex = 9;
+            this.chkClipMon.Text = "📋";
+            this.toolTip1.SetToolTip(this.chkClipMon, "Text box follows clipboard");
+            this.chkClipMon.UseVisualStyleBackColor = true;
+            this.chkClipMon.CheckedChanged += new System.EventHandler(this.chkClipMon_CheckedChanged);
             // 
             // grpbOCR
             // 
@@ -769,7 +785,7 @@
             this.grpbOCR.Location = new System.Drawing.Point(406, 146);
             this.grpbOCR.Name = "grpbOCR";
             this.grpbOCR.Size = new System.Drawing.Size(212, 86);
-            this.grpbOCR.TabIndex = 13;
+            this.grpbOCR.TabIndex = 14;
             this.grpbOCR.TabStop = false;
             // 
             // linkLabel1
@@ -799,7 +815,7 @@
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(630, 22);
-            this.statusStrip1.TabIndex = 15;
+            this.statusStrip1.TabIndex = 16;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
@@ -842,7 +858,7 @@
             this.groupBox1.Location = new System.Drawing.Point(245, 146);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(145, 86);
-            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "WIndows OCR";
             // 
@@ -881,7 +897,7 @@
             this.lbLastAction.Location = new System.Drawing.Point(242, 42);
             this.lbLastAction.Name = "lbLastAction";
             this.lbLastAction.Size = new System.Drawing.Size(84, 15);
-            this.lbLastAction.TabIndex = 17;
+            this.lbLastAction.TabIndex = 18;
             this.lbLastAction.Text = "last action";
             this.lbLastAction.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -895,7 +911,7 @@
             this.panel1.Location = new System.Drawing.Point(12, 41);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(227, 349);
-            this.panel1.TabIndex = 16;
+            this.panel1.TabIndex = 17;
             this.panel1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // pictureBox1
@@ -942,6 +958,18 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // clipMonitor
+            // 
+            this.clipMonitor.MonitorClipboard = false;
+            this.clipMonitor.ObservableFormats.All = false;
+            this.clipMonitor.ObservableFormats.Files = false;
+            this.clipMonitor.ObservableFormats.Images = false;
+            this.clipMonitor.ObservableFormats.Others = false;
+            this.clipMonitor.ObservableFormats.Texts = true;
+            this.clipMonitor.ObserveLastEntry = false;
+            this.clipMonitor.Tag = "";
+            this.clipMonitor.ClipboardChanged += new System.EventHandler<WK.Libraries.SharpClipboardNS.SharpClipboard.ClipboardChangedEventArgs>(this.clipMonitor_ClipboardChanged);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -970,6 +998,7 @@
             this.Controls.Add(this.grpbOCR);
             this.Controls.Add(this.grpbSettings);
             this.Controls.Add(this.txtResult);
+            this.Controls.Add(this.chkClipMon);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "OCRGet";
@@ -1073,6 +1102,8 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStripTray;
         private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private WK.Libraries.SharpClipboardNS.SharpClipboard clipMonitor;
+        private System.Windows.Forms.CheckBox chkClipMon;
     }
 }
 

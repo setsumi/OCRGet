@@ -19,6 +19,7 @@ using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using WK.Libraries.SharpClipboardNS;
 
 namespace OCRGet
 {
@@ -452,6 +453,9 @@ namespace OCRGet
             v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "processedimage", out v);
             chkProcessed.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "txtFollowClipboard", out v);
+            chkClipMon.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
             //}
             //catch { }
         }
@@ -500,6 +504,7 @@ namespace OCRGet
             _inidata["general"]["clearcacherecyclebin"] = chkRecycle.Checked.ToString();
             _inidata["general"]["zoomimage"] = chkZoom.Checked.ToString();
             _inidata["general"]["processedimage"] = chkProcessed.Checked.ToString();
+            _inidata["general"]["txtFollowClipboard"] = chkClipMon.Checked.ToString();
 
             _config.WriteFile(_inifile, _inidata);
         }
@@ -895,6 +900,7 @@ namespace OCRGet
                 var txt = (txtResult.SelectionLength > 0) ? txtResult.SelectedText : txtResult.Text;
                 try
                 {
+                    this.Tag = chkClipMon.Checked ? "selfcopy" : "";
                     Clipboard.SetText(txt);
                 }
                 catch
@@ -955,7 +961,7 @@ namespace OCRGet
                     btnRecognize_Click(this, null);
                 return true;
             }
-            else if (keyData == (Keys.Control | Keys.C)) // copy text
+            else if (keyData == (Keys.Control | Keys.C) || keyData == (Keys.Control | Keys.Insert)) // copy text
             {
                 btnCopy_Click(this, null);
                 return true;
@@ -992,12 +998,11 @@ namespace OCRGet
                 throw new Exception("RegisterHotkey() : Unable to generate unique hotkey ID: " + _hotkeyID);
             }
 
-            // Ctrl-Alt-S
-            if (!NativeMethods.RegisterHotKey(this.Handle, _hotkeyID, (uint)Modifiers.Control | (uint)Modifiers.Alt,
-                (uint)ShareX.HelpersLib.VirtualKeyCode.KEY_S))
+            // Win+Alt+S
+            if (!NativeMethods.RegisterHotKey(this.Handle, _hotkeyID, (uint)Modifiers.Win | (uint)Modifiers.Alt, (uint)VirtualKeyCode.KEY_S))
             {
                 NativeMethods.GlobalDeleteAtom((ushort)_hotkeyID);
-                throw new Exception("RegisterHotkey() : Unable to register hotkey Ctrl-Alt-S with ID: " + _hotkeyID);
+                throw new Exception("RegisterHotkey() : Unable to register hotkey Win+Alt+S with ID: " + _hotkeyID);
             }
         }
 
@@ -1407,6 +1412,29 @@ namespace OCRGet
                 Properties.Settings.Default.winWidth = this.Width;
                 Properties.Settings.Default.winHeight = this.Height;
             }
+        }
+
+        private void clipMonitor_ClipboardChanged(object sender, SharpClipboard.ClipboardChangedEventArgs e)
+        {
+            if ((string)this.Tag != "selfcopy")
+            {
+                if (e.ContentType == SharpClipboard.ContentTypes.Text)
+                {
+                    txtResult.Text = clipMonitor.ClipboardText;
+                    txtResult.SelectionStart = 0;
+                    txtResult.SelectionLength = 0;
+                    txtResult.ScrollToCaret();
+                }
+            }
+            else
+            {
+                this.Tag = "";
+            }
+        }
+
+        private void chkClipMon_CheckedChanged(object sender, EventArgs e)
+        {
+            clipMonitor.MonitorClipboard = chkClipMon.Checked;
         }
     } // Form1
 

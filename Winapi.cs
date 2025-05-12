@@ -26,5 +26,16 @@ namespace OCRGet
         //[DllImport("user32.dll", SetLastError = true)]
         //[return: MarshalAs(UnmanagedType.Bool)]
         //public static extern bool IsIconic(IntPtr hWnd);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateDC(string lpszDriver, string lpszDevice, string lpszOutput, IntPtr lpInitData);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteDC(IntPtr hDC);
+
+        public const int DESKTOPVERTRES = 117;
+        public const int DESKTOPHORZRES = 118;
+        [DllImport("gdi32.dll")]
+        public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
     }
 }
