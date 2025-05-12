@@ -999,10 +999,10 @@ namespace OCRGet
             }
 
             // Win+Alt+S
-            if (!NativeMethods.RegisterHotKey(this.Handle, _hotkeyID, (uint)Modifiers.Win | (uint)Modifiers.Alt, (uint)VirtualKeyCode.KEY_S))
+            if (!NativeMethods.RegisterHotKey(this.Handle, _hotkeyID, (uint)Modifiers.Control | (uint)Modifiers.Alt, (uint)VirtualKeyCode.KEY_S))
             {
                 NativeMethods.GlobalDeleteAtom((ushort)_hotkeyID);
-                throw new Exception("RegisterHotkey() : Unable to register hotkey Win+Alt+S with ID: " + _hotkeyID);
+                throw new Exception("RegisterHotkey() : Unable to register hotkey Ctrl+Alt+S with ID: " + _hotkeyID);
             }
         }
 
