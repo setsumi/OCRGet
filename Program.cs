@@ -12,6 +12,9 @@ namespace OCRGet
         [STAThread]
         static void Main()
         {
+            // fix region snap
+            Winapi.SetProcessDPIAware();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

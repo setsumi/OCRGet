@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-//using System.Runtime.InteropServices;
 
 namespace OCRGet
 {
@@ -20,7 +14,7 @@ namespace OCRGet
 
         private Rectangle rectRegion;
         private Point startPoint, endPoint;
-        private Boolean isDrawing = false;
+        private bool isDrawing = false;
 
         public Rectangle area { get { return this.rectRegion; } set { this.rectRegion = value; } }
 
@@ -32,7 +26,7 @@ namespace OCRGet
             BackColor = Color.White;
             FormBorderStyle = FormBorderStyle.None;
             StartPosition = FormStartPosition.Manual;
-            Bounds = Screen.FromPoint(Cursor.Position).Bounds;
+            Bounds = SystemInformation.VirtualScreen;
             TopMost = true;
             Opacity = .004;
         }
@@ -41,9 +35,8 @@ namespace OCRGet
         {
             isDrawing = true;
 
-            Point mousePos = DPIUtil.CorrectMousePos(sender as Control, e.X, e.Y);
-            startPoint.X = endPoint.X = mousePos.X;
-            startPoint.Y = endPoint.Y = mousePos.Y;
+            startPoint.X = endPoint.X = e.X;
+            startPoint.Y = endPoint.Y = e.Y;
             rectRegion.X = startPoint.X;
             rectRegion.Y = startPoint.Y;
             rectRegion.Width = 0;
@@ -63,9 +56,8 @@ namespace OCRGet
 
             ControlPaint.DrawReversibleFrame(rectRegion, this.BackColor, FrameStyle.Dashed);
 
-            Point mousePos = DPIUtil.CorrectMousePos(sender as Control, e.X, e.Y);
-            endPoint.X = mousePos.X;
-            endPoint.Y = mousePos.Y;
+            endPoint.X = e.X;
+            endPoint.Y = e.Y;
 
             rectRegion.X = Math.Min(startPoint.X, endPoint.X);
             rectRegion.Y = Math.Min(startPoint.Y, endPoint.Y);

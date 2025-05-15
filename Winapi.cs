@@ -37,5 +37,8 @@ namespace OCRGet
         public const int DESKTOPHORZRES = 118;
         [DllImport("gdi32.dll")]
         public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetProcessDPIAware();
     }
 }
