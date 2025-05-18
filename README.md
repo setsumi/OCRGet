@@ -11,6 +11,6 @@ https://github.com/setsumi/OCRGet/releases
 
 ## Screenshots
 
-![image](https://github.com/setsumi/OCRGet/assets/5970554/a6f25c54-7bb5-4dff-a7e3-49ad7a5cbd38)
+![image](https://github.com/user-attachments/assets/b9259014-8c34-442f-a954-c2c0de81b0fa)
 
 ![image](https://github.com/setsumi/OCRGet/assets/5970554/0c1fb596-d190-4054-a862-3853152094a6)
