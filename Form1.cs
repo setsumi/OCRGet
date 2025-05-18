@@ -183,6 +183,11 @@ namespace OCRGet
         private bool _initForm = true;
         private bool _allowFormShow = true; // used for hiding form to tray on start
         private FormWindowState _lastWindowState = FormWindowState.Normal;
+        private Keys _snapHotkey = Keys.None;
+        private Modifiers _snapHotkeyModifiers = Modifiers.None;
+        private bool _useProxy = false;
+        private string _proxyHost = "";
+        private int _proxyPort = 1;
 
         public Form1()
         {
@@ -456,6 +461,27 @@ namespace OCRGet
             v = "";
             _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "txtFollowClipboard", out v);
             chkClipMon.Checked = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
+
+            // options dialog data
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "snapHotkey", out v);
+            _snapHotkey = (Keys)Enum.Parse(typeof(Keys), string.IsNullOrEmpty(v) ? "S" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "snapHotkeyModifiers", out v);
+            _snapHotkeyModifiers = (Modifiers)Enum.Parse(typeof(Modifiers), string.IsNullOrEmpty(v) ? "Alt, Control" : v);
+
+            UpdateSnapButtonHint();
+
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "useProxy", out v);
+            _useProxy = bool.Parse(string.IsNullOrEmpty(v) ? "False" : v);
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "proxyHost", out v);
+            _proxyHost = string.IsNullOrEmpty(v) ? "localhost" : v;
+            v = "";
+            _inidata.TryGetKey("general" + _inidata.SectionKeySeparator + "proxyPort", out v);
+            _proxyPort = int.Parse(string.IsNullOrEmpty(v) ? "8080" : v);
+
             //}
             //catch { }
         }
@@ -505,6 +531,12 @@ namespace OCRGet
             _inidata["general"]["zoomimage"] = chkZoom.Checked.ToString();
             _inidata["general"]["processedimage"] = chkProcessed.Checked.ToString();
             _inidata["general"]["txtFollowClipboard"] = chkClipMon.Checked.ToString();
+
+            _inidata["general"]["snapHotkey"] = _snapHotkey.ToString();
+            _inidata["general"]["snapHotkeyModifiers"] = _snapHotkeyModifiers.ToString();
+            _inidata["general"]["useProxy"] = _useProxy.ToString();
+            _inidata["general"]["proxyHost"] = _proxyHost;
+            _inidata["general"]["proxyPort"] = _proxyPort.ToString();
 
             _config.WriteFile(_inifile, _inidata);
         }
@@ -723,7 +755,7 @@ namespace OCRGet
             try
             {
                 webResponse = FormUpload.MultipartFormDataPost(form.p_cred.Url, form.p_cred.Useragent,
-                    postParameters, form.p_nettimeout * 1000);
+                    postParameters, form.p_nettimeout * 1000, form._useProxy, form._proxyHost, form._proxyPort);
             }
             catch (Exception e)
             {
@@ -989,21 +1021,28 @@ namespace OCRGet
             sim.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.MENU);
         }
 
-        private void RegisterHotkey()
+        private bool RegisterHotkey()
         {
+            UnregisterHotkey();
+            if (_snapHotkey == Keys.None) return true;
+
             string uniqueID = Guid.NewGuid().ToString("N");
             _hotkeyID = NativeMethods.GlobalAddAtom(uniqueID);
             if (_hotkeyID == 0)
             {
-                throw new Exception("RegisterHotkey() : Unable to generate unique hotkey ID: " + _hotkeyID);
+                Helpers.MessageError($"Unable to generate unique hotkey ID: {_hotkeyID}");
+                return false;
             }
 
-            // Win+Alt+S
-            if (!NativeMethods.RegisterHotKey(this.Handle, _hotkeyID, (uint)Modifiers.Control | (uint)Modifiers.Alt, (uint)VirtualKeyCode.KEY_S))
+            if (!NativeMethods.RegisterHotKey(this.Handle, _hotkeyID, (uint)_snapHotkeyModifiers, (uint)_snapHotkey))
             {
+                Helpers.MessageError($"Failed to register hotkey {Helpers.FormatHotkeyString(_snapHotkeyModifiers, _snapHotkey)}\nProbably already taken.");
                 NativeMethods.GlobalDeleteAtom((ushort)_hotkeyID);
-                throw new Exception("RegisterHotkey() : Unable to register hotkey Ctrl+Alt+S with ID: " + _hotkeyID);
+                _hotkeyID = 0;
+                return false;
             }
+
+            return true;
         }
 
         private void UnregisterHotkey()
@@ -1436,6 +1475,51 @@ namespace OCRGet
         {
             clipMonitor.MonitorClipboard = chkClipMon.Checked;
         }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            using (FormOptions optionsForm = new FormOptions(_snapHotkey, _snapHotkeyModifiers,
+                _useProxy, _proxyHost, _proxyPort))
+            {
+                if (optionsForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    // snap hotkey
+                    if (optionsForm.SelectedKeyCode != Keys.None)
+                    {
+                        if (optionsForm.SelectedKeyCode == Keys.Back && optionsForm.SelectedModifiers == Modifiers.None)
+                        {
+                            _snapHotkey = Keys.None;
+                            _snapHotkeyModifiers = Modifiers.None;
+                        }
+                        else
+                        {
+                            _snapHotkey = optionsForm.SelectedKeyCode;
+                            _snapHotkeyModifiers = optionsForm.SelectedModifiers;
+                        }
+
+                        if (!RegisterHotkey())
+                        {
+                            _snapHotkey = Keys.None;
+                            _snapHotkeyModifiers = Modifiers.None;
+                        }
+                    }
+                    UpdateSnapButtonHint();
+
+                    // proxy
+                    _useProxy = optionsForm.UseProxy;
+                    _proxyHost = optionsForm.ProxyHost;
+                    _proxyPort = optionsForm.ProxyPort;
+
+                    SaveConfig();
+                }
+            }
+        }
+
+        private void UpdateSnapButtonHint()
+        {
+            toolTip1.SetToolTip(btnRegion, $"Region Snap (Ctrl+S), global ({Helpers.FormatHotkeyString(_snapHotkeyModifiers, _snapHotkey)})");
+        }
+
     } // Form1
 
     internal static class FormHelpers

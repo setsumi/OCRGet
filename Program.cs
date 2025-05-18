@@ -12,7 +12,7 @@ namespace OCRGet
         [STAThread]
         static void Main()
         {
-            // fix region snap
+            // fix region snap and blurred UI
             Winapi.SetProcessDPIAware();
 
             Application.EnableVisualStyles();
@@ -30,12 +30,12 @@ namespace OCRGet
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            MessageBox.Show((e.ExceptionObject as Exception).Message, "Unhandled UI Exception", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            Helpers.MessageError((e.ExceptionObject as Exception).Message, "Unhandled UI Exception");
         }
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception.Message, "Unhandled Thread Exception", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            Helpers.MessageError(e.Exception.Message, "Unhandled Thread Exception");
         }
     }
 }

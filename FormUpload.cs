@@ -12,16 +12,19 @@ namespace OCRGet
     public static class FormUpload
     {
         private static readonly Encoding encoding = Encoding.UTF8;
-        public static HttpWebResponse MultipartFormDataPost(string postUrl, string userAgent, Dictionary<string, object> postParameters, int timeout)
+        public static HttpWebResponse MultipartFormDataPost(string postUrl, string userAgent,
+            Dictionary<string, object> postParameters, int timeout,
+            bool useProxy, string proxyHost, int proxyPort)
         {
             string formDataBoundary = String.Format("----------{0:N}", Guid.NewGuid());
             string contentType = "multipart/form-data; boundary=" + formDataBoundary;
 
             byte[] formData = GetMultipartFormData(postParameters, formDataBoundary);
 
-            return PostForm(postUrl, userAgent, contentType, formData, timeout);
+            return PostForm(postUrl, userAgent, contentType, formData, timeout, useProxy, proxyHost, proxyPort);
         }
-        private static HttpWebResponse PostForm(string postUrl, string userAgent, string contentType, byte[] formData, int timeout)
+        private static HttpWebResponse PostForm(string postUrl, string userAgent, string contentType,
+            byte[] formData, int timeout, bool useProxy, string proxyHost, int proxyPort)
         {
             HttpWebRequest request = WebRequest.Create(postUrl) as HttpWebRequest;
 
@@ -37,6 +40,10 @@ namespace OCRGet
             request.CookieContainer = new CookieContainer();
             request.ContentLength = formData.Length;
             request.Timeout = timeout;
+            if (useProxy)
+            {
+                request.Proxy = new WebProxy(proxyHost, proxyPort);
+            }
 
             // You could add authentication here as well if needed:
             // request.PreAuthenticate = true;

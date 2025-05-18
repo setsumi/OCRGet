@@ -82,6 +82,7 @@
             this.lbMarkerSnap = new System.Windows.Forms.Label();
             this.lbMarkerExtern = new System.Windows.Forms.Label();
             this.chkClipMon = new System.Windows.Forms.CheckBox();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.grpbOCR = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tmrStartup = new System.Windows.Forms.Timer(this.components);
@@ -161,7 +162,7 @@
             this.btnRegion.Size = new System.Drawing.Size(75, 23);
             this.btnRegion.TabIndex = 1;
             this.btnRegion.Text = "Region...(&S)";
-            this.toolTip1.SetToolTip(this.btnRegion, "Region Snap (Ctrl+S), global (Ctrl+Alt+S)");
+            this.toolTip1.SetToolTip(this.btnRegion, "unset, this is a bug");
             this.btnRegion.UseVisualStyleBackColor = true;
             this.btnRegion.Click += new System.EventHandler(this.btnRegion_Click);
             // 
@@ -772,6 +773,17 @@
             this.chkClipMon.UseVisualStyleBackColor = true;
             this.chkClipMon.CheckedChanged += new System.EventHandler(this.chkClipMon_CheckedChanged);
             // 
+            // btnSettings
+            // 
+            this.btnSettings.Location = new System.Drawing.Point(255, 11);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(27, 23);
+            this.btnSettings.TabIndex = 23;
+            this.btnSettings.Text = "⚙";
+            this.toolTip1.SetToolTip(this.btnSettings, "Options...");
+            this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
             // grpbOCR
             // 
             this.grpbOCR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -999,6 +1011,7 @@
             this.Controls.Add(this.grpbSettings);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.chkClipMon);
+            this.Controls.Add(this.btnSettings);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "OCRGet";
@@ -1104,6 +1117,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private WK.Libraries.SharpClipboardNS.SharpClipboard clipMonitor;
         private System.Windows.Forms.CheckBox chkClipMon;
+        private System.Windows.Forms.Button btnSettings;
     }
 }
 
